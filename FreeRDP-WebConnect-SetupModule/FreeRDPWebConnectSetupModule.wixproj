@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.7</ProductVersion>
+    <ProjectGuid>dd777c71-7593-4865-8a30-87c67b2a9c05</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>FreeRDPWebConnectSetup</OutputName>
+    <OutputType>Module</OutputType>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <Name>FreeRDPWebConnectSetupModule</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>BinariesPath=Binaries;WebRootPath=WebRoot</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="CustomActions.wxs" />
+    <Compile Include="Binaries.wxs" />
+    <Compile Include="MergeModule.wxs" />
+    <Compile Include="WebRoot.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Binaries\" />
+    <Folder Include="Actions" />
+    <Folder Include="WebRoot\" />
+    <Folder Include="WebRoot\css\" />
+    <Folder Include="WebRoot\js\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Actions\Common.js" />
+    <Content Include="Actions\ConfFileActions.js" />
+    <Content Include="Actions\ACLActions.js" />
+    <Content Include="Actions\ServiceActions.js" />
+    <Content Include="Actions\X509Actions.js" />
+    <Content Include="Binaries.xslt" />
+    <Content Include="Binaries\boost_date_time-vc120-mt-1_55.dll" />
+    <Content Include="Binaries\boost_filesystem-vc120-mt-1_55.dll" />
+    <Content Include="Binaries\boost_program_options-vc120-mt-1_55.dll" />
+    <Content Include="Binaries\boost_regex-vc120-mt-1_55.dll" />
+    <Content Include="Binaries\boost_system-vc120-mt-1_55.dll" />
+    <Content Include="Binaries\cpprest120_2_0.dll" />
+    <Content Include="Binaries\libeay32.dll" />
+    <Content Include="Binaries\libfreerdp-cache.dll" />
+    <Content Include="Binaries\libfreerdp-client.dll" />
+    <Content Include="Binaries\libfreerdp-codec.dll" />
+    <Content Include="Binaries\libfreerdp-common.dll" />
+    <Content Include="Binaries\libfreerdp-core.dll" />
+    <Content Include="Binaries\libfreerdp-crypto.dll" />
+    <Content Include="Binaries\libfreerdp-gdi.dll" />
+    <Content Include="Binaries\libfreerdp-locale.dll" />
+    <Content Include="Binaries\libfreerdp-primitives.dll" />
+    <Content Include="Binaries\libfreerdp-rail.dll" />
+    <Content Include="Binaries\libfreerdp-utils.dll" />
+    <Content Include="Binaries\libpng16.dll" />
+    <Content Include="Binaries\libwfreerdp-client.dll" />
+    <Content Include="Binaries\libwinpr-asn1.dll" />
+    <Content Include="Binaries\libwinpr-bcrypt.dll" />
+    <Content Include="Binaries\libwinpr-com.dll" />
+    <Content Include="Binaries\libwinpr-credentials.dll" />
+    <Content Include="Binaries\libwinpr-credui.dll" />
+    <Content Include="Binaries\libwinpr-crt.dll" />
+    <Content Include="Binaries\libwinpr-crypto.dll" />
+    <Content Include="Binaries\libwinpr-dsparse.dll" />
+    <Content Include="Binaries\libwinpr-environment.dll" />
+    <Content Include="Binaries\libwinpr-error.dll" />
+    <Content Include="Binaries\libwinpr-file.dll" />
+    <Content Include="Binaries\libwinpr-handle.dll" />
+    <Content Include="Binaries\libwinpr-heap.dll" />
+    <Content Include="Binaries\libwinpr-input.dll" />
+    <Content Include="Binaries\libwinpr-interlocked.dll" />
+    <Content Include="Binaries\libwinpr-io.dll" />
+    <Content Include="Binaries\libwinpr-library.dll" />
+    <Content Include="Binaries\libwinpr-locale.dll" />
+    <Content Include="Binaries\libwinpr-memory.dll" />
+    <Content Include="Binaries\libwinpr-nt.dll" />
+    <Content Include="Binaries\libwinpr-path.dll" />
+    <Content Include="Binaries\libwinpr-pipe.dll" />
+    <Content Include="Binaries\libwinpr-pool.dll" />
+    <Content Include="Binaries\libwinpr-registry.dll" />
+    <Content Include="Binaries\libwinpr-rpc.dll" />
+    <Content Include="Binaries\libwinpr-security.dll" />
+    <Content Include="Binaries\libwinpr-smartcard.dll" />
+    <Content Include="Binaries\libwinpr-sspi.dll" />
+    <Content Include="Binaries\libwinpr-sspicli.dll" />
+    <Content Include="Binaries\libwinpr-synch.dll" />
+    <Content Include="Binaries\libwinpr-sysinfo.dll" />
+    <Content Include="Binaries\libwinpr-thread.dll" />
+    <Content Include="Binaries\libwinpr-timezone.dll" />
+    <Content Include="Binaries\libwinpr-utils.dll" />
+    <Content Include="Binaries\libwinpr-winhttp.dll" />
+    <Content Include="Binaries\libwinpr-winsock.dll" />
+    <Content Include="Binaries\libwinpr-wtsapi.dll" />
+    <Content Include="Binaries\pthreadVC2.dll" />
+    <Content Include="Binaries\ssleay32.dll" />
+    <Content Include="Binaries\wsgate.exe" />
+    <Content Include="Binaries\WSGateService.exe" />
+    <Content Include="Binaries\zlib.dll" />
+    <Content Include="UtilsActions.dll" />
+    <Content Include="WebRoot\css\style-debug.css" />
+    <Content Include="WebRoot\css\style.css" />
+    <Content Include="WebRoot\css\vkb-debug.css" />
+    <Content Include="WebRoot\css\vkb.css" />
+    <Content Include="WebRoot\c_default.png" />
+    <Content Include="WebRoot\c_none.png" />
+    <Content Include="WebRoot\favicon.ico" />
+    <Content Include="WebRoot\FreeRDP_Logo.png" />
+    <Content Include="WebRoot\index.html" />
+    <Content Include="WebRoot\js\modernizr-debug.js" />
+    <Content Include="WebRoot\js\modernizr.js" />
+    <Content Include="WebRoot\js\mootools-debug.js" />
+    <Content Include="WebRoot\js\mootools.js" />
+    <Content Include="WebRoot\js\simpletabs-debug.js" />
+    <Content Include="WebRoot\js\simpletabs.js" />
+    <Content Include="WebRoot\js\vkb-debug.js" />
+    <Content Include="WebRoot\js\vkb.js" />
+    <Content Include="WebRoot\js\vkbl-de_DE.json" />
+    <Content Include="WebRoot\js\vkbl-en_US.json" />
+    <Content Include="WebRoot\js\wsgate-debug.js" />
+    <Content Include="WebRoot\js\wsgate.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" />
+  <Target Name="BeforeBuild">
+    <HeatDirectory DirectoryRefId="WEBROOTDIR" OutputFile="WebRoot.wxs" Directory="WebRoot" ComponentGroupName="WebRootComponentGroup" ToolPath="$(WixToolPath)" PreprocessorVariable="var.WebRootPath" GenerateGuidsNow="true" SuppressCom="true" SuppressRegistry="true" KeepEmptyDirectories="true" SuppressRootDirectory="true">
+    </HeatDirectory>
+    <HeatDirectory DirectoryRefId="BINARIESDIR" OutputFile="Binaries.wxs" Directory="Binaries" ComponentGroupName="BinariesComponentGroup" ToolPath="$(WixToolPath)" PreprocessorVariable="var.BinariesPath" GenerateGuidsNow="true" SuppressCom="true" SuppressRegistry="true" KeepEmptyDirectories="true" SuppressRootDirectory="true" Transforms="Binaries.xslt">
+    </HeatDirectory>
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)FreeRDP-WebConnect-Installer\"</PostBuildEvent>
+  </PropertyGroup>
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

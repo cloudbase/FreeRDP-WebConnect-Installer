@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <Binary Id="ActionsCommWSGate" SourceFile="Actions\Common.js" />
+    <Binary Id="ConfFileActions" SourceFile="Actions\ConfFileActions.js" />
+    <Binary Id="X509Actions" SourceFile="Actions\X509Actions.js" />
+    <Binary Id="ACLActions" SourceFile="Actions\ACLActions.js" />
+    <Binary Id="ServiceActions" SourceFile="Actions\ServiceActions.js" />
+    <Binary Id="UtilsActionsDLL" SourceFile="UtilsActions.dll" />
+
+    <CustomAction Id="CreateCommonIncludeFile"
+              BinaryKey="ActionsCommWSGate"
+              JScriptCall="createCommonIncludeFileAction" />
+
+    <CustomAction Id="DeleteCommonIncludeFile"
+              BinaryKey="ActionsCommWSGate"
+              JScriptCall="deleteCommonIncludeFileAction"
+              Execute="deferred" Return="check" Impersonate="no" />
+
+    <CustomAction Id="GenerateRandomPassword"
+              BinaryKey="UtilsActionsDLL"
+              DllEntry="GenerateRandomPasswordAction"
+              Execute="immediate"
+              Return="check" />
+
+    <CustomAction Id="RemoveConfDirUsersACE_Prop" Return="check" Property="RemoveConfDirUsersACE"
+                  Value="[WEBCONNECTCONFDIR]" />
+    <CustomAction Id="RemoveConfDirUsersACE"
+              BinaryKey="ACLActions"
+              JScriptCall="removeUsersACEFromPathAction" Execute="deferred" Return="check" Impersonate="no" />
+
+    <CustomAction Id="GenerateSelfSignedCert_Prop" Return="check" Property="GenerateSelfSignedCert"
+                  Value="[BINARIESDIR]|[WEBCONNECT_HTTPS_CERT_FILE]" />
+    <CustomAction Id="GenerateSelfSignedCert"
+              BinaryKey="X509Actions"
+              JScriptCall="generateSelfSignedX509CertAction" Execute="deferred" Return="check" Impersonate="no" />
+
+    <CustomAction Id="GenerateWSGateConfFile_Prop" Return="check" Property="GenerateWSGateConfFile"
+                  Value="[WEBCONNECTCONFDIR]|[WEBROOTDIR]|[HTTP_LISTENING_ADDRESS]|[HTTP_PORT]|[REDIRECT_HTTPS]|[HTTPS_LISTENING_ADDRESS]|[HTTPS_PORT]|[WEBCONNECT_HTTPS_CERT_FILE]|[OPENSTACK_AUTH_URL]|[OPENSTACK_TENANT_NAME]|[OPENSTACK_USERNAME]|[OPENSTACK_PASSWORD]|[HYPERV_HOST_USERNAME]|[HYPERV_HOST_PASSWORD]" />
+    <CustomAction Id="GenerateWSGateConfFile"
+              BinaryKey="ConfFileActions"
+              JScriptCall="writeWSGateConfFileAction" Execute="deferred" Return="check" Impersonate="no" />
+
+    <CustomAction Id="RestartFreeRDPWebConnectService_Prop" Return="check" Property="ChangeFreeRDPWebConnectService"
+                  Value="wsgate||Restart" />
+    <CustomAction Id="StartFreeRDPWebConnectService_Prop" Return="check" Property="ChangeFreeRDPWebConnectService"
+                  Value="wsgate||Start" />
+    <CustomAction Id="ChangeFreeRDPWebConnectService"
+              BinaryKey="ServiceActions"
+              JScriptCall="changeServiceAction" Execute="deferred" Return="check" Impersonate="no" />
+  </Fragment>
+</Wix>

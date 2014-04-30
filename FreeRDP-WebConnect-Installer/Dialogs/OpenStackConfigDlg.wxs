@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <UI>
+      <Dialog Id="OpenStackConfigDlg" Width="370" Height="270">
+
+        <Control Type="CheckBox" Id="openStackEnableCheckBox" Width="200" Height="17" X="10" Y="52" Text=" Enable O&amp;penStack integration"
+                 CheckBoxValue="1" ToolTip="Configures FreeRDP-WebConnect for OpenStack integration" Property="OPENSTACK_ENABLED" />
+
+        <Control Type="GroupBox" Id="openStackGroupBox" Width="272" Height="78" X="10" Y="72" Text="OpenStack credentials">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="openStackAuthUrlText" Width="77" Height="12" X="15" Y="86" Text="Authentication &amp;url:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="openStackAuthUrlEdit" Width="260" Height="15" X="15" Y="98" Property="OPENSTACK_AUTH_URL">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="openStackTenantNameText" Width="80" Height="12" X="15" Y="118" Text="&amp;Tenant name:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="openStackTenantNameEdit" Width="80" Height="15" X="15" Y="130" Property="OPENSTACK_TENANT_NAME">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="openStackUsernameText" Width="80" Height="12" X="105" Y="118" Text="&amp;Username:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="openStackUsernameEdit" Width="80" Height="17" X="105" Y="130" Property="OPENSTACK_USERNAME">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="openStackPasswordText" Width="80" Height="12" X="195" Y="118" Text="&amp;Password:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="openStackPasswordEdit" Width="80" Height="17" X="195" Y="130" Password="yes" Property="OPENSTACK_PASSWORD">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="GroupBox" Id="hypervGroupBox" Width="140" Height="78" X="10" Y="154" Text="Hyper-V host credentials">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="hypervHostUsernameText" Width="80" Height="12" X="15" Y="168" Text="U&amp;sername:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="hypervHostUsernameEdit" Width="130" Height="15" X="15" Y="180" Property="HYPERV_HOST_USERNAME">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="hypervHostPasswordText" Width="80" Height="12" X="15" Y="200" Text="P&amp;assword:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="hypervHostPasswordEdit" Width="80" Height="15" X="15" Y="212" Password="yes" Property="HYPERV_HOST_PASSWORD">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back">
+          <Publish Event="NewDialog" Value="BaseConfigDlg">1</Publish>
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="&amp;Next">
+          <Publish Event="NewDialog" Value="VerifyReadyDlg">
+          </Publish>
+          <Condition Action="enable">NOT OPENSTACK_ENABLED OR (OPENSTACK_AUTH_URL AND OPENSTACK_TENANT_NAME AND OPENSTACK_USERNAME AND OPENSTACK_PASSWORD AND HYPERV_HOST_USERNAME AND HYPERV_HOST_PASSWORD)</Condition>
+          <Condition Action="disable">NOT (NOT OPENSTACK_ENABLED OR (OPENSTACK_AUTH_URL AND OPENSTACK_TENANT_NAME AND OPENSTACK_USERNAME AND OPENSTACK_PASSWORD AND HYPERV_HOST_USERNAME AND HYPERV_HOST_PASSWORD))</Condition>
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+          <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+        </Control>
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="WixUI_Bmp_Banner" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>OpenStack Hyper-V integration options</Text>
+        </Control>
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes">
+          <Text>{\WixUI_Font_Title}OpenStack configuration</Text>
+        </Control>
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+      </Dialog>
+    </UI>
+  </Fragment>
+</Wix>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="{0935139D-41F6-40C1-A8C5-218DD93F8C76}" Name="FreeRDP-WebConnect" Language="1033" Version="1.0.0.0" Manufacturer="Cloudbase Solutions Srl" UpgradeCode="1e4250fa-f5d7-43a0-9f6a-2ab8aac8e32c">
+    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="mszip" />
+
+    <Feature Id="VC120Redist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VC120Redist" />
+    </Feature>
+
+    <Feature Id="FreeRDPWebConnect" Title="FreeRDP-WebConnect" Level="1" Absent="disallow" InstallDefault="local" TypicalDefault="install" AllowAdvertise="no"
+             Description="Installs and configures the FreeRDP-WebConnect HTML5 gateway service."
+             ConfigurableDirectory="INSTALLDIR" Display="expand">
+      <MergeRef Id="FreeRDPWebConnectSetupModule" />
+    </Feature>
+
+    <UIRef Id="MyWixUI_FeatureTree" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <WixVariable Id="WixUIBannerBmp" Value="images\bannrbmp.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="images\dlgbmp.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+
+    <Property Id="GENERATED_PASSWORD_PROPERTY_NAME" Value="GENERATED_PASSWORD.8BD3EFB0_E455_4744_AF44_D74A3FFC311A" />
+
+    <Property Id="REDIRECT_HTTPS" Value="1" />
+    <Property Id="HTTP_LISTENING_ADDRESS" Value="0.0.0.0" />
+    <Property Id="HTTP_PORT" Value="8000" />
+    <Property Id="HTTPS_LISTENING_ADDRESS" Value="0.0.0.0" />
+    <Property Id="HTTPS_PORT" Value="4430" />
+
+    <Property Id="OPENSTACK_AUTH_URL" Value="http://keystone:5000/v2.0/" />
+    <Property Id="OPENSTACK_TENANT_NAME" Value="admin" />
+    <Property Id="OPENSTACK_USERNAME" Value="admin" />
+    <Property Id="OPENSTACK_PASSWORD" Hidden="yes" />
+
+    <Property Id="HYPERV_HOST_USERNAME" Value="Administrator" />
+    <Property Id="HYPERV_HOST_PASSWORD" Hidden="yes" />
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="CompanyFolder" Name="Cloudbase Solutions">
+          <Directory Id="INSTALLDIR" Name="FreeRDP-WebConnect" />
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="INSTALLDIR">
+      <Merge Id="FreeRDPWebConnectSetupModule" SourceFile="FreeRDPWebConnectSetup.msm" DiskId="1" Language="0">
+        <ConfigurationData Name="HTTP_PORT_Property" Value="[HTTP_PORT]" />
+        <ConfigurationData Name="HTTP_LISTENING_ADDRESS_Property" Value="[HTTP_LISTENING_ADDRESS]" />
+        <ConfigurationData Name="HTTPS_PORT_Property" Value="[HTTPS_PORT]" />
+        <ConfigurationData Name="HTTPS_LISTENING_ADDRESS_Property" Value="[HTTPS_LISTENING_ADDRESS]" />
+        <ConfigurationData Name="REDIRECT_HTTPS_Property" Value="[REDIRECT_HTTPS]" />
+        <ConfigurationData Name="OPENSTACK_AUTH_URL_Property" Value="[OPENSTACK_AUTH_URL]" />
+        <ConfigurationData Name="OPENSTACK_TENANT_NAME_Property" Value="[OPENSTACK_TENANT_NAME]" />
+        <ConfigurationData Name="OPENSTACK_USERNAME_Property" Value="[OPENSTACK_USERNAME]" />
+        <ConfigurationData Name="OPENSTACK_PASSWORD_Property" Value="[OPENSTACK_PASSWORD]" />
+        <ConfigurationData Name="HYPERV_HOST_USERNAME_Property" Value="[HYPERV_HOST_USERNAME]" />
+        <ConfigurationData Name="HYPERV_HOST_PASSWORD_Property" Value="[HYPERV_HOST_PASSWORD]" />
+      </Merge>
+    </DirectoryRef>
+
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VC120Redist" SourceFile="Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0" />
+    </DirectoryRef>
+  </Fragment>
+</Wix>

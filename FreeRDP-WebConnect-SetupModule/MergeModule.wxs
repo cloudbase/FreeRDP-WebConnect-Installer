@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Module Id="FreeRDPWebConnectSetup" Language="0" Version="1.0.0.0">
+    <Package Id="8bd3efb0-e455-4744-af44-d74a3ffc311a" Manufacturer="Cloudbase Solutions Srl" InstallerVersion="405"
+             InstallScope="perMachine" Platform="x86" InstallPrivileges="elevated" Languages="1033" SummaryCodepage="1252" />
+
+    <ComponentGroupRef Id="BinariesComponentGroup" />
+    <ComponentGroupRef Id="WebRootComponentGroup" />
+    <ComponentRef Id="WSGateService" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="MergeRedirectFolder" Name="." />
+    </Directory>
+
+    <DirectoryRef Id="MergeRedirectFolder">
+      <Directory Id="BINARIESDIR" Name="Binaries" />
+    </DirectoryRef>
+
+    <DirectoryRef Id="MergeRedirectFolder">
+      <Directory Id="WEBROOTDIR" Name="WebRoot" />
+    </DirectoryRef>
+
+    <DirectoryRef Id="MergeRedirectFolder">
+      <Directory Id="WEBCONNECTCONFDIR" Name="etc">
+        <Component Id="etc" Guid="{ABEFD740-392C-4A39-AC91-E61EDB2D9256}">
+          <CreateFolder>
+            <util:PermissionEx GenericRead="yes" GenericExecute="yes" User="FreeRDP-WebConnect" />
+          </CreateFolder>
+        </Component>
+      </Directory>
+    </DirectoryRef>
+
+    <Property Id="HTTP_PORT" />
+    <Configuration Name="HTTP_PORT_Property" Format="Text" NonNullable="yes" DefaultValue="8000" />
+    <Substitution Table="CustomAction" Row="setHTTP_PORT" Column="Target" Value="[=HTTP_PORT_Property]" />
+    <CustomAction Property="HTTP_PORT" Value="[HTTP_PORT]" Id="setHTTP_PORT" Execute="immediate" />
+
+    <Property Id="HTTP_LISTENING_ADDRESS" />
+    <Configuration Name="HTTP_LISTENING_ADDRESS_Property" Format="Text" NonNullable="yes" DefaultValue="0.0.0.0" />
+    <Substitution Table="CustomAction" Row="setHTTP_LISTENING_ADDRESS" Column="Target" Value="[=HTTP_LISTENING_ADDRESS_Property]" />
+    <CustomAction Property="HTTP_LISTENING_ADDRESS" Value="[HTTP_LISTENING_ADDRESS]" Id="setHTTP_LISTENING_ADDRESS" Execute="immediate" />
+
+    <Property Id="HTTPS_PORT" />
+    <Configuration Name="HTTPS_PORT_Property" Format="Text" NonNullable="yes" DefaultValue="4430" />
+    <Substitution Table="CustomAction" Row="setHTTPS_PORT" Column="Target" Value="[=HTTPS_PORT_Property]" />
+    <CustomAction Property="HTTPS_PORT" Value="[HTTPS_PORT]" Id="setHTTPS_PORT" Execute="immediate" />
+
+    <Property Id="HTTPS_LISTENING_ADDRESS" />
+    <Configuration Name="HTTPS_LISTENING_ADDRESS_Property" Format="Text" NonNullable="yes" DefaultValue="0.0.0.0" />
+    <Substitution Table="CustomAction" Row="setHTTPS_LISTENING_ADDRESS" Column="Target" Value="[=HTTPS_LISTENING_ADDRESS_Property]" />
+    <CustomAction Property="HTTPS_LISTENING_ADDRESS" Value="[HTTPS_LISTENING_ADDRESS]" Id="setHTTPS_LISTENING_ADDRESS" Execute="immediate" />
+
+    <Property Id="REDIRECT_HTTPS" />
+    <Configuration Name="REDIRECT_HTTPS_Property" Format="Text" NonNullable="yes" DefaultValue="1" />
+    <Substitution Table="CustomAction" Row="setREDIRECT_HTTPS" Column="Target" Value="[=REDIRECT_HTTPS_Property]" />
+    <CustomAction Property="REDIRECT_HTTPS" Value="[REDIRECT_HTTPS]" Id="setREDIRECT_HTTPS" Execute="immediate" />
+
+    <Property Id="OPENSTACK_AUTH_URL" />
+    <Configuration Name="OPENSTACK_AUTH_URL_Property" Format="Text" NonNullable="yes" />
+    <Substitution Table="CustomAction" Row="setOPENSTACK_AUTH_URL" Column="Target" Value="[=OPENSTACK_AUTH_URL_Property]" />
+    <CustomAction Property="OPENSTACK_AUTH_URL" Value="[OPENSTACK_AUTH_URL]" Id="setOPENSTACK_AUTH_URL" Execute="immediate" />
+
+    <Property Id="OPENSTACK_TENANT_NAME" />
+    <Configuration Name="OPENSTACK_TENANT_NAME_Property" Format="Text" NonNullable="yes" DefaultValue="admin" />
+    <Substitution Table="CustomAction" Row="setOPENSTACK_TENANT_NAME" Column="Target" Value="[=OPENSTACK_TENANT_NAME_Property]" />
+    <CustomAction Property="OPENSTACK_TENANT_NAME" Value="[OPENSTACK_TENANT_NAME]" Id="setOPENSTACK_TENANT_NAME" Execute="immediate" />
+
+    <Property Id="OPENSTACK_USERNAME" />
+    <Configuration Name="OPENSTACK_USERNAME_Property" Format="Text" NonNullable="yes" DefaultValue="admin" />
+    <Substitution Table="CustomAction" Row="setOPENSTACK_USERNAME" Column="Target" Value="[=OPENSTACK_USERNAME_Property]" />
+    <CustomAction Property="OPENSTACK_USERNAME" Value="[OPENSTACK_USERNAME]" Id="setOPENSTACK_USERNAME" Execute="immediate" />
+
+    <Property Id="OPENSTACK_PASSWORD" Hidden="yes" />
+    <Configuration Name="OPENSTACK_PASSWORD_Property" Format="Text" NonNullable="yes" />
+    <Substitution Table="CustomAction" Row="setOPENSTACK_PASSWORD" Column="Target" Value="[=OPENSTACK_PASSWORD_Property]" />
+    <CustomAction Property="OPENSTACK_PASSWORD" Value="[OPENSTACK_PASSWORD]" Id="setOPENSTACK_PASSWORD" Execute="immediate" />
+
+    <Property Id="HYPERV_HOST_USERNAME" />
+    <Configuration Name="HYPERV_HOST_USERNAME_Property" Format="Text" NonNullable="yes" DefaultValue="Administrator" />
+    <Substitution Table="CustomAction" Row="setHYPERV_HOST_USERNAME" Column="Target" Value="[=HYPERV_HOST_USERNAME_Property]" />
+    <CustomAction Property="HYPERV_HOST_USERNAME" Value="[HYPERV_HOST_USERNAME]" Id="setHYPERV_HOST_USERNAME" Execute="immediate" />
+
+    <Property Id="HYPERV_HOST_PASSWORD" Hidden="yes" />
+    <Configuration Name="HYPERV_HOST_PASSWORD_Property" Format="Text" NonNullable="yes" />
+    <Substitution Table="CustomAction" Row="setHYPERV_HOST_PASSWORD" Column="Target" Value="[=HYPERV_HOST_PASSWORD_Property]" />
+    <CustomAction Property="HYPERV_HOST_PASSWORD" Value="[HYPERV_HOST_PASSWORD]" Id="setHYPERV_HOST_PASSWORD" Execute="immediate" />
+
+    <Property Id="GENERATED_PASSWORD" Hidden="yes" />
+
+    <SetProperty Id="WEBCONNECT_HTTPS_CERT_FILE" After="AppSearch" Value="[WEBCONNECTCONFDIR]server.cer" />
+
+    <InstallExecuteSequence>
+      <Custom Action="setHTTP_PORT" After="LaunchConditions" />
+      <Custom Action="setHTTP_LISTENING_ADDRESS" After="LaunchConditions" />
+      <Custom Action="setHTTPS_PORT" After="LaunchConditions" />
+      <Custom Action="setHTTPS_LISTENING_ADDRESS" After="LaunchConditions" />
+      <Custom Action="setREDIRECT_HTTPS" After="LaunchConditions" />
+      <Custom Action="setOPENSTACK_AUTH_URL" After="LaunchConditions" />
+      <Custom Action="setOPENSTACK_TENANT_NAME" After="LaunchConditions" />
+      <Custom Action="setOPENSTACK_USERNAME" After="LaunchConditions" />
+      <Custom Action="setOPENSTACK_PASSWORD" After="LaunchConditions" />
+      <Custom Action="setHYPERV_HOST_USERNAME" After="LaunchConditions" />
+      <Custom Action="setHYPERV_HOST_PASSWORD" After="LaunchConditions" />
+
+      <Custom Action="CreateCommonIncludeFile" After="CostFinalize" />
+
+      <Custom Action="GenerateRandomPassword" After="CostFinalize" />
+
+      <Custom Action="RemoveConfDirUsersACE_Prop" After="CostFinalize" />
+      <Custom Action="RemoveConfDirUsersACE" Before="GenerateSelfSignedCert"><![CDATA[REMOVE <> "ALL"]]></Custom>
+
+      <Custom Action="GenerateSelfSignedCert_Prop" After="CostFinalize" />
+      <Custom Action="GenerateSelfSignedCert" Before="ChangeFreeRDPWebConnectService"><![CDATA[REMOVE <> "ALL"]]></Custom>
+
+      <Custom Action="GenerateWSGateConfFile_Prop" After="CostFinalize" />
+      <Custom Action="GenerateWSGateConfFile" Before="ChangeFreeRDPWebConnectService"><![CDATA[REMOVE <> "ALL"]]></Custom>
+
+      <Custom Action="StartFreeRDPWebConnectService_Prop" After="CostFinalize">NOT Installed</Custom>
+      <Custom Action="RestartFreeRDPWebConnectService_Prop" After="CostFinalize"><![CDATA[Installed AND REMOVE <> "ALL"]]></Custom>
+      <Custom Action="ChangeFreeRDPWebConnectService" Before="DeleteCommonIncludeFile"><![CDATA[REMOVE <> "ALL"]]></Custom>
+
+      <Custom Action="DeleteCommonIncludeFile" Before="InstallFinalize" />
+    </InstallExecuteSequence>
+  </Module>
+
+  <Fragment>
+    <Component Id="WSGateService" Directory="BINARIESDIR" Guid="{E51AD21E-309E-4C19-A24A-18EA0ADFD4F0}">
+      <util:User Id="wsgatetuser" LogonAsService="yes" CreateUser="yes" CanNotChangePassword="yes" Disabled="no" Name="FreeRDP-WebConnect"
+                 Password="[GENERATED_PASSWORD]" PasswordExpired="no" PasswordNeverExpires="yes" RemoveOnUninstall="yes" UpdateIfExists="yes">
+      </util:User>
+
+      <File Id="wsgate.exe" Source="Binaries\wsgate.exe" KeyPath="yes" Checksum="yes" />
+      <ServiceInstall
+        Id="WSGateServiceInstaller"
+        Type="ownProcess"
+        Vital="yes"
+        Name="wsgate"
+        DisplayName="FreeRDP-WebConnect"
+        Description="FreeRDP HTML5 WebSockets gateway"
+        Start="auto"
+        Account=".\FreeRDP-WebConnect"
+        ErrorControl="ignore"
+        Password="[GENERATED_PASSWORD]"
+        Interactive="no">
+      </ServiceInstall>
+      <!-- Start service at the end of the setup, not here -->
+      <ServiceControl
+        Id="WSGateStartService"
+        Stop="both"
+        Remove="uninstall"
+        Name="wsgate"
+        Wait="yes" />
+      <util:ServiceConfig
+        ServiceName="wsgate"
+        FirstFailureActionType="restart"
+        SecondFailureActionType="restart"
+        ThirdFailureActionType="restart"
+        RestartServiceDelayInSeconds="1" />
+    </Component>
+  </Fragment>
+</Wix>

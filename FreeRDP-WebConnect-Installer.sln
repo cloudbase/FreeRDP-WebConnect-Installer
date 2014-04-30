@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "FreeRDPWebConnectInstaller", "FreeRDP-WebConnect-Installer\FreeRDPWebConnectInstaller.wixproj", "{DF18941E-F795-4F5A-8766-96381D3C45DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DD777C71-7593-4865-8A30-87C67B2A9C05} = {DD777C71-7593-4865-8A30-87C67B2A9C05}
+	EndProjectSection
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "FreeRDPWebConnectSetupModule", "FreeRDP-WebConnect-SetupModule\FreeRDPWebConnectSetupModule.wixproj", "{DD777C71-7593-4865-8A30-87C67B2A9C05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF18941E-F795-4F5A-8766-96381D3C45DE}.Debug|x86.ActiveCfg = Debug|x86
+		{DF18941E-F795-4F5A-8766-96381D3C45DE}.Debug|x86.Build.0 = Debug|x86
+		{DF18941E-F795-4F5A-8766-96381D3C45DE}.Release|x86.ActiveCfg = Release|x86
+		{DF18941E-F795-4F5A-8766-96381D3C45DE}.Release|x86.Build.0 = Release|x86
+		{DD777C71-7593-4865-8A30-87C67B2A9C05}.Debug|x86.ActiveCfg = Debug|x86
+		{DD777C71-7593-4865-8A30-87C67B2A9C05}.Debug|x86.Build.0 = Debug|x86
+		{DD777C71-7593-4865-8A30-87C67B2A9C05}.Release|x86.ActiveCfg = Release|x86
+		{DD777C71-7593-4865-8A30-87C67B2A9C05}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
