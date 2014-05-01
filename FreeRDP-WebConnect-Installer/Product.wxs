@@ -38,6 +38,8 @@
 
     <Property Id="HYPERV_HOST_USERNAME" Value="Administrator" />
     <Property Id="HYPERV_HOST_PASSWORD" Hidden="yes" />
+
+    <Property Id="ENABLE_FIREWALL_RULES" Value="1" />
   </Product>
 
   <Fragment>
@@ -64,6 +66,7 @@
         <ConfigurationData Name="OPENSTACK_PASSWORD_Property" Value="[OPENSTACK_PASSWORD]" />
         <ConfigurationData Name="HYPERV_HOST_USERNAME_Property" Value="[HYPERV_HOST_USERNAME]" />
         <ConfigurationData Name="HYPERV_HOST_PASSWORD_Property" Value="[HYPERV_HOST_PASSWORD]" />
+        <ConfigurationData Name="ENABLE_FIREWALL_RULES_Property" Value="[ENABLE_FIREWALL_RULES]" />
       </Merge>
     </DirectoryRef>
 

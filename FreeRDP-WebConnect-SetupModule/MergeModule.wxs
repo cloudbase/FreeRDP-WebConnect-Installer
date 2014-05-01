@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+     xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension">
   <Module Id="FreeRDPWebConnectSetup" Language="0" Version="1.0.0.0">
     <Package Id="8bd3efb0-e455-4744-af44-d74a3ffc311a" Manufacturer="Cloudbase Solutions Srl" InstallerVersion="405"
              InstallScope="perMachine" Platform="x86" InstallPrivileges="elevated" Languages="1033" SummaryCodepage="1252" />
@@ -7,6 +8,7 @@
     <ComponentGroupRef Id="BinariesComponentGroup" />
     <ComponentGroupRef Id="WebRootComponentGroup" />
     <ComponentRef Id="WSGateService" />
+    <ComponentRef Id="FirewallRules" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="MergeRedirectFolder" Name="." />
@@ -85,6 +87,11 @@
     <Substitution Table="CustomAction" Row="setHYPERV_HOST_PASSWORD" Column="Target" Value="[=HYPERV_HOST_PASSWORD_Property]" />
     <CustomAction Property="HYPERV_HOST_PASSWORD" Value="[HYPERV_HOST_PASSWORD]" Id="setHYPERV_HOST_PASSWORD" Execute="immediate" />
 
+    <Property Id="ENABLE_FIREWALL_RULES" />
+    <Configuration Name="ENABLE_FIREWALL_RULES_Property" Format="Text" NonNullable="no" DefaultValue="1" />
+    <Substitution Table="CustomAction" Row="setENABLE_FIREWALL_RULES" Column="Target" Value="[=ENABLE_FIREWALL_RULES_Property]" />
+    <CustomAction Property="ENABLE_FIREWALL_RULES" Value="[ENABLE_FIREWALL_RULES]" Id="setENABLE_FIREWALL_RULES" Execute="immediate" />
+
     <Property Id="GENERATED_PASSWORD" Hidden="yes" />
 
     <SetProperty Id="WEBCONNECT_HTTPS_CERT_FILE" After="AppSearch" Value="[WEBCONNECTCONFDIR]server.cer" />
@@ -101,6 +108,7 @@
       <Custom Action="setOPENSTACK_PASSWORD" After="LaunchConditions" />
       <Custom Action="setHYPERV_HOST_USERNAME" After="LaunchConditions" />
       <Custom Action="setHYPERV_HOST_PASSWORD" After="LaunchConditions" />
+      <Custom Action="setENABLE_FIREWALL_RULES" After="LaunchConditions" />
 
       <Custom Action="CreateCommonIncludeFile" After="CostFinalize" />
 
@@ -122,6 +130,16 @@
       <Custom Action="DeleteCommonIncludeFile" Before="InstallFinalize" />
     </InstallExecuteSequence>
   </Module>
+
+  <Fragment>
+    <Component Id="FirewallRules" Guid="{5A27649F-EEB3-4FA9-8879-4C1373C78F99}" Directory="BINARIESDIR">
+      <Condition>ENABLE_FIREWALL_RULES</Condition>
+      <fire:FirewallException Id="FreeRDPWebConnectHttp" Name="FreeRDP-WebConnect HTTP" Port="[HTTP_PORT]" Protocol="tcp" Scope="any" />
+      <fire:FirewallException Id="FreeRDPWebConnectHttps" Name="FreeRDP-WebConnect HTTPS" Port="[HTTPS_PORT]" Protocol="tcp" Scope="any" />
+      <!-- This is here just to avoid errors -->
+      <CreateFolder />
+    </Component>
+  </Fragment>
 
   <Fragment>
     <Component Id="WSGateService" Directory="BINARIESDIR" Guid="{E51AD21E-309E-4C19-A24A-18EA0ADFD4F0}">

@@ -3,9 +3,6 @@
   <Fragment>
     <UI>
       <Dialog Id="BaseConfigDlg" Width="370" Height="270">
-        <Control Type="CheckBox" Id="httpsRedirectCheckBox" Width="200" Height="17" X="10" Y="132" Text="&amp;Redirect HTTP connections to HTTPS"
-                 CheckBoxValue="1" ToolTip="Automatically redirect HTTP connections to HTTPS. Recommended." Property="REDIRECT_HTTPS" />
-
         <Control Type="Text" Id="httpListeningAddressText" Width="105" Height="12" X="10" Y="56" Text="HTTP &amp;listening address:">
         </Control>
         <Control Type="Edit" Id="httpListeningAddressEdit" Width="100" Height="15" X="10" Y="68" Property="HTTP_LISTENING_ADDRESS">
@@ -25,6 +22,12 @@
         </Control>
         <Control Type="Edit" Id="httpsPortEdit" Width="60" Height="15" X="124" Y="108" Property="HTTPS_PORT" Integer="yes">
         </Control>
+
+        <Control Type="CheckBox" Id="httpsRedirectCheckBox" Width="200" Height="17" X="10" Y="132" Text="&amp;Redirect HTTP connections to HTTPS"
+                 CheckBoxValue="1" ToolTip="Automatically redirect HTTP connections to HTTPS. Recommended." Property="REDIRECT_HTTPS" />
+
+        <Control Type="CheckBox" Id="enableFirewallRulesCheckBox" Width="200" Height="17" X="10" Y="152" Text="Enable &amp;firewall rules"
+                 CheckBoxValue="1" ToolTip="Enable HTTP and HTTPS firewall rules for external access." Property="ENABLE_FIREWALL_RULES" />
 
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back">
           <Publish Event="NewDialog" Value="CustomizeDlg">1</Publish>
