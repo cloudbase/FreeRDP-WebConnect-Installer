@@ -146,7 +146,7 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
         &perl Configure VC-WIN32 --prefix="$ENV:OPENSSL_ROOT_DIR"
         if ($LastExitCode) { throw "perl failed" }
 
-        ms\do_nasm
+        &.\ms\do_nasm
         if ($LastExitCode) { throw "do_nasm failed" }
 
         &nmake -f ms\ntdll.mak

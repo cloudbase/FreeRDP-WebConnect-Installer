@@ -282,3 +282,61 @@ function GetCredentialsFromFile($path)
     $securePass = $data[1] | convertto-securestring
     return new-object -typename System.Management.Automation.PSCredential -argumentlist $username,$securePass
 }
+
+function RunCommand($cmd, $arguments, $expectedExitCode = 0)
+{
+	Write-Host "Executing: $cmd $arguments"
+
+	$p = Start-Process -Wait -PassThru -NoNewWindow $cmd -ArgumentList $arguments
+	if($p.ExitCode -ne $expectedExitCode)
+	{
+		throw "$cmd failed with exit code: $($p.ExitCode)"
+	}
+}
+
+function DownloadFile($url, $dest)
+{
+	Write-Host "Downloading: $url"
+
+	$webClient = New-Object System.Net.webclient
+	$webClient.DownloadFile($url, $dest)
+}
+
+function DownloadInstall($url, $type, $arguments="")
+{
+	$guid = [System.Guid]::NewGuid().ToString()
+	$path = "$guid.$type"
+
+	try
+	{
+
+		ExecRetry { DownloadFile $url $path }
+		if($type -eq "msi")
+		{
+			if(!$arguments)
+			{
+				$arguments = "/qn"
+			}
+			ExecRetry { RunCommand "msiexec.exe" "/i $path $arguments" }
+		}
+		else
+		{
+			ExecRetry { RunCommand $path $arguments }
+		}
+	}
+	finally
+	{
+		if(test-Path $path) { del $path }
+	}
+}
+
+function ChocolateyInstall($package)
+{
+	ExecRetry {
+		&cinst $package
+		if($lastexitcode)
+		{
+			throw "cinst failed with exit code: $lastexitcode"
+		}
+	}
+}

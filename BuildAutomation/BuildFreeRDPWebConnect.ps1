@@ -1,16 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 <#
-Requirements:
-
-VS 2013 (12.0) >= professional
-http://downloads.sourceforge.net/project/boost/boost-binaries/1.55.0-build2/boost_1_55_0-msvc-12.0-32.exe
-http://www.nasm.us/pub/nasm/releasebuilds/2.11.02/win32/nasm-2.11.02-installer.exe
-http://www.activestate.com/activeperl/downloads/thank-you?dl=http://downloads.activestate.com/ActivePerl/releases/5.18.2.1802/ActivePerl-5.18.2.1802-MSWin32-x86-64int-298023.msi
-http://www.cmake.org/files/v2.8/cmake-2.8.12.2-win32-x86.exe
-http://downloads.sourceforge.net/sevenzip/7z920-x64.msi
-http://git-scm.com/download/win
-
+Install requirements first, see: Installrequirements.ps1
 #>
 
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition

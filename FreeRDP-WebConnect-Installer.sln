@@ -14,8 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildAutomation", "BuildAut
 	ProjectSection(SolutionItems) = preProject
 		BuildAutomation\0001-Fix-VS-12-compilation-bug.patch = BuildAutomation\0001-Fix-VS-12-compilation-bug.patch
 		BuildAutomation\BuildFreeRDPWebConnect.ps1 = BuildAutomation\BuildFreeRDPWebConnect.ps1
+		BuildAutomation\BuildFreeRDPWebConnectSetup.ps1 = BuildAutomation\BuildFreeRDPWebConnectSetup.ps1
 		BuildAutomation\BuildUtils.ps1 = BuildAutomation\BuildUtils.ps1
 		BuildAutomation\Dependencies.ps1 = BuildAutomation\Dependencies.ps1
+		BuildAutomation\InstallRequirements.ps1 = BuildAutomation\InstallRequirements.ps1
 	EndProjectSection
 EndProject
 Global
