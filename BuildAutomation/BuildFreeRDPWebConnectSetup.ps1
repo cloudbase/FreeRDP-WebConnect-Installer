@@ -17,14 +17,12 @@ try
 	$ENV:PATH += ";C:\Tools\AlexFTPS-1.1.0"
 
 	# Needed for SSH
-	#$ENV:HOME = $ENV:USERPROFILE
-	$ENV:HOME = "C:\Temp\testbuild"
+	$ENV:HOME = $ENV:USERPROFILE
 
 	$sign_cert_thumbprint = "65c29b06eb665ce202676332e8129ac48d613c61"
-	#$ftpsCredentials = GetCredentialsFromFile "$ENV:UserProfile\ftps.txt"
+	$ftpsCredentials = GetCredentialsFromFile "$ENV:UserProfile\ftps.txt"
 
 	SetVCVars
-
 
 	# Make sure to have a private key that matches a github deployer key in $ENV:HOME\.ssh\id_rsa
 	GitClonePull "FreeRDP-WebConnect-Installer" "git@github.com:/cloudbase/FreeRDP-WebConnect-Installer.git"
@@ -32,6 +30,16 @@ try
 	$solution_dir = "FreeRDP-WebConnect-Installer"
 	$msm_project_dir = "$solution_dir\FreeRDP-WebConnect-SetupModule"
 	$msi_project_dir = "$solution_dir\FreeRDP-WebConnect-Installer"
+	$msm_binaries_dir = "$msm_project_dir\Binaries"
+
+	$build_freerdp_webconnect_scripts = "$solution_dir\BuildAutomation\BuildFreeRDPWebConnect.ps1"
+
+	powershell -ExecutionPolicy RemoteSigned -File $build_freerdp_webconnect_scripts
+	if ($LastExitCode) { throw "BuildFreeRDPWebConnect.ps1 failed" }
+
+	copy "build\bin\*.dll" $msm_binaries_dir
+	copy "build\bin\wsgate.exe" $msm_binaries_dir
+	copy "build\bin\openssl.exe" $msm_binaries_dir
 
 	pushd .
 	try
