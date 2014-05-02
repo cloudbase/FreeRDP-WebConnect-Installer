@@ -99,10 +99,10 @@
     <Content Include="Binaries\libwinpr-winhttp.dll" />
     <Content Include="Binaries\libwinpr-winsock.dll" />
     <Content Include="Binaries\libwinpr-wtsapi.dll" />
+    <Content Include="Binaries\openssl.exe" />
     <Content Include="Binaries\pthreadVC2.dll" />
     <Content Include="Binaries\ssleay32.dll" />
     <Content Include="Binaries\wsgate.exe" />
-    <Content Include="Binaries\WSGateService.exe" />
     <Content Include="Binaries\zlib.dll" />
     <Content Include="UtilsActions.dll" />
     <Content Include="WebRoot\css\style-debug.css" />
