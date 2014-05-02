@@ -145,7 +145,7 @@
     </HeatDirectory>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)FreeRDP-WebConnect-Installer\"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "..\..\..\FreeRDP-WebConnect-Installer\"</PostBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
