@@ -8,12 +8,11 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 . "$scriptPath\BuildUtils.ps1"
 
 $basePath = "C:\OpenStack\build\FreeRDP-WebConnect"
-$installerBasePath = "$basePath\Installer"
 
-CheckDir $installerBasePath
+CheckDir $basePath
 try
 {
-	cd $installerBasePath
+	cd $basePath
 
 	$ENV:PATH += ";$ENV:ProgramFiles (x86)\Git\bin\"
 	$ENV:PATH += ";C:\Tools\AlexFTPS-1.1.0"
