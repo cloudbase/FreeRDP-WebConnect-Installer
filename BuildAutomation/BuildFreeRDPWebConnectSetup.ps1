@@ -24,8 +24,10 @@ try
 
 	SetVCVars
 
-	# Make sure to have a private key that matches a github deployer key in $ENV:HOME\.ssh\id_rsa
-	GitClonePull "FreeRDP-WebConnect-Installer" "git@github.com:/cloudbase/FreeRDP-WebConnect-Installer.git"
+	ExecRetry {
+		# Make sure to have a private key that matches a github deployer key in $ENV:HOME\.ssh\id_rsa
+		GitClonePull "FreeRDP-WebConnect-Installer" "git@github.com:/cloudbase/FreeRDP-WebConnect-Installer.git"
+	}
 
 	$solution_dir = "FreeRDP-WebConnect-Installer"
 	$msm_project_dir = "$solution_dir\FreeRDP-WebConnect-SetupModule"
@@ -67,16 +69,18 @@ try
 
 	$msi_path = "$msi_project_dir\bin\Release\FreeRDP-WebConnect-Installer.msi"
 
-	&signtool.exe sign /sha1 $sign_cert_thumbprint /t http://timestamp.verisign.com/scripts/timstamp.dll /v $msi_path
-	if ($LastExitCode) { throw "signtool failed" }
+	ExecRetry {
+		&signtool.exe sign /sha1 $sign_cert_thumbprint /t http://timestamp.verisign.com/scripts/timstamp.dll /v $msi_path
+		if ($LastExitCode) { throw "signtool failed" }
+	}
 
 	$ftpsUsername = $ftpsCredentials.UserName
 	$ftpsPassword = $ftpsCredentials.GetNetworkCredential().Password
 
-	&ftps -h www.cloudbase.it -ssl All -U $ftpsUsername -P $ftpsPassword -sslInvalidServerCertHandling Accept -p $msi_path /cloudbase.it/main/downloads/FreeRDPWebConnect_Beta.msi
-	if ($LastExitCode) { throw "ftps failed" }
-
-	Remove-Item -Recurse -Force $python_dir
+	ExecRetry {
+		&ftps -h www.cloudbase.it -ssl All -U $ftpsUsername -P $ftpsPassword -sslInvalidServerCertHandling Accept -p $msi_path /cloudbase.it/main/downloads/FreeRDPWebConnect_Beta.msi
+		if ($LastExitCode) { throw "ftps failed" }
+	}
 }
 finally
 {
