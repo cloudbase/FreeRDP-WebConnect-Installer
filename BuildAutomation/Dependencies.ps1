@@ -259,7 +259,7 @@ function BuildPthreadsW32($buildDir, $outputPath, $pthreadsWin32Base, $setBuildE
 function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $pthreadsW32Lib, $setBuildEnvVars=$true)
 {
     $ehsDir = "EHS"
-    $ehsUrl = "https://github.com/cezarboicu/EHS.git"
+    $ehsUrl = "https://github.com/cloudbase/EHS.git"
 
     pushd .
     try
