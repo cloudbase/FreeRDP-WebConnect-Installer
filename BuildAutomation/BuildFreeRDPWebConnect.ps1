@@ -33,7 +33,8 @@ $ENV:INCLUDE+= ";$ENV:BOOST_ROOT"
 $cmakeGenerator = "Visual Studio $($vsVersion.Split(".")[0])"
 SetVCVars $vsVersion
 
-$buildDir = "$pwd\build"
+$basePath = "C:\OpenStack\build\FreeRDP-WebConnect"
+$buildDir = "$basePath\Build"
 $outputPath = "$buildDir\bin"
 
 $ENV:OPENSSL_ROOT_DIR="$outputPath\OpenSSL"

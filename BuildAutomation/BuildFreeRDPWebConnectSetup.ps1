@@ -7,11 +7,13 @@ Install requirements first, see: Installrequirements.ps1
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 . "$scriptPath\BuildUtils.ps1"
 
-$basepath = "C:\OpenStack\build\FreeRDP-WebConnect"
-CheckDir $basepath
+$basePath = "C:\OpenStack\build\FreeRDP-WebConnect"
+$installerBasePath = "$basePath\Installer"
+
+CheckDir $installerBasePath
 try
 {
-	cd $basepath
+	cd $installerBasePath
 
 	$ENV:PATH += ";$ENV:ProgramFiles (x86)\Git\bin\"
 	$ENV:PATH += ";C:\Tools\AlexFTPS-1.1.0"
@@ -34,14 +36,11 @@ try
 	$msi_project_dir = "$solution_dir\FreeRDP-WebConnect-Installer"
 	$msm_binaries_dir = "$msm_project_dir\Binaries"
 
-	$build_freerdp_webconnect_scripts = "$solution_dir\BuildAutomation\BuildFreeRDPWebConnect.ps1"
+	$buildDir = "$basePath\Build"
 
-	powershell -ExecutionPolicy RemoteSigned -File $build_freerdp_webconnect_scripts
-	if ($LastExitCode) { throw "BuildFreeRDPWebConnect.ps1 failed" }
-
-	copy "build\bin\*.dll" $msm_binaries_dir
-	copy "build\bin\wsgate.exe" $msm_binaries_dir
-	copy "build\bin\openssl.exe" $msm_binaries_dir
+	copy "$buildDir\bin\*.dll" $msm_binaries_dir
+	copy "$buildDir\bin\wsgate.exe" $msm_binaries_dir
+	copy "$buildDir\bin\openssl.exe" $msm_binaries_dir
 
 	pushd .
 	try
