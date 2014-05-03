@@ -100,10 +100,19 @@ function PullInstall($path, $url)
     }
 }
 
-function Expand7z($archive)
+function Expand7z($archive, $outputDir = ".")
 {
-	&7z.exe x -y $archive
-	if ($LastExitCode) { throw "7z.exe failed on archive: $archive"}
+	pushd .
+	try
+	{
+		cd $outputDir
+		&7z.exe x -y $archive
+		if ($LastExitCode) { throw "7z.exe failed on archive: $archive"}
+	}
+	finally
+	{
+		popd
+	}
 }
 
 function PullRelease($project, $release, $version)
@@ -339,4 +348,18 @@ function ChocolateyInstall($package)
 			throw "cinst failed with exit code: $lastexitcode"
 		}
 	}
+}
+
+function ImportCertificateUser($pfxPath, $pfxPassword) {
+    $store = New-Object System.Security.Cryptography.X509Certificates.X509Store(
+        [System.Security.Cryptography.X509Certificates.StoreName]::My,
+        [System.Security.Cryptography.X509Certificates.StoreLocation]::CurrentUser)
+    $store.Open([System.Security.Cryptography.X509Certificates.OpenFlags]::ReadWrite)
+
+    $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($pfxPath, $pfxPassword,
+        ([System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::UserKeySet -bor
+         [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::PersistKeySet))
+    $store.Add($cert)
+
+    return $cert.Thumbprint
 }

@@ -27,6 +27,18 @@ if ($LastExitCode) { throw "git config failed" }
 &git config --global user.email "build@cloudbase"
 if ($LastExitCode) { throw "git config failed" }
 
+$toolsdir = "C:\Tools"
+CheckDir $toolsdir
+
+$path = "$ENV:TEMP\AlexFTPS_bin_1.1.0.zip" 
+DownloadFile "http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=ftps&DownloadId=271579&FileTime=129582362189170000&Build=20885" $path
+$ENV:PATH += ";$ENV:ProgramFiles\7-Zip"
+Expand7z $path $toolsdir
+del $path
+
+$pfxPassword = "changeme"
+$thumbprint = ImportCertificateUser "$ENV:USERPROFILE\Cloudbase_authenticode.p12" $pfxPassword
+# TODO: write thumbrint to file and load it in teh build script(s) in place of the hardcoded value
 
 #DownloadInstall "http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=wix&DownloadId=762937&FileTime=130301249344430000&Build=20885" "exe" "/quiet"
 #DownloadInstall 'https://github.com/msysgit/msysgit/releases/download/Git-1.9.2-preview20140411/Git-1.9.2-preview20140411.exe' "exe" "/verysilent"
