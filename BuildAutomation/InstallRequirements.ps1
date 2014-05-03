@@ -30,11 +30,13 @@ if ($LastExitCode) { throw "git config failed" }
 $toolsdir = "C:\Tools"
 CheckDir $toolsdir
 
-$path = "$ENV:TEMP\AlexFTPS_bin_1.1.0.zip" 
-DownloadFile "http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=ftps&DownloadId=271579&FileTime=129582362189170000&Build=20885" $path
+# TODO: Release AlexFTP 1.1.1 and replace the following beta
+$path = "$ENV:TEMP\AlexFTPSBeta.zip" 
+DownloadFile "https://www.cloudbase.it/downloads/AlexFTPSBeta.zip" $path
 $ENV:PATH += ";$ENV:ProgramFiles\7-Zip"
 Expand7z $path $toolsdir
 del $path
+Move "$toolsdir\Release" "$toolsdir\AlexFTPS-1.1.0"
 
 $pfxPassword = "changeme"
 $thumbprint = ImportCertificateUser "$ENV:USERPROFILE\Cloudbase_authenticode.p12" $pfxPassword
