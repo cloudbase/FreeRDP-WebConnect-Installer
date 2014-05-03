@@ -8,11 +8,13 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 . "$scriptPath\BuildUtils.ps1"
 . "$scriptPath\Dependencies.ps1"
 
+# Make sure ActivePerl comes before MSYS Perl, otherwise
+# the OpenSSL build will fail
+$ENV:PATH = "C:\Perl\bin;$ENV:PATH"
 $ENV:PATH += ";$ENV:ProgramFiles\7-Zip"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\Git\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake 2.8\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\nasm"
-$ENV:PATH += ";C:\Perl\bin"
 
 $vsVersion = "12.0"
 
