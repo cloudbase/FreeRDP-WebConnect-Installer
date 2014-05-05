@@ -37,6 +37,7 @@ try
 
 	$buildDir = "$basePath\Build"
 
+	del -Force "$msm_binaries_dir\*"
 	copy "$buildDir\bin\*.dll" $msm_binaries_dir
 	copy "$buildDir\bin\wsgate.exe" $msm_binaries_dir
 	copy "$buildDir\bin\openssl.exe" $msm_binaries_dir
