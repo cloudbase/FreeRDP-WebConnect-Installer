@@ -42,5 +42,20 @@ $pfxPassword = "changeme"
 $thumbprint = ImportCertificateUser "$ENV:USERPROFILE\Cloudbase_authenticode.p12" $pfxPassword
 # TODO: write thumbrint to file and load it in teh build script(s) in place of the hardcoded value
 
+# pypi mirror configuration
+CheckDir "$ENV:USERPROFILE\pip"
+$pipIni = @"
+[global]
+index-url = https://pypi.cloudbasesolutions.com/simple
+cert = c:\openstack\pypi.cloudbasesolutions.com.crt
+"@
+Set-Content "$ENV:USERPROFILE\pip\pip.ini" $pipIni
+
+# Add Pypi mirror host to hosts file:
+Add-Content "$ENV:SYSTEMROOT\System32\Drivers\etc\hosts" "10.73.76.94 pypi.cloudbasesolutions.com"
+
+# Get Pypi mirror certificate 
+Invoke-Webrequest "https://dl.dropboxusercontent.com/u/9060190/pypi.cloudbasesolutions.com.crt" -OutFile "c:\openstack\pypi.cloudbasesolutions.com.crt"
+
 #DownloadInstall "http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=wix&DownloadId=762937&FileTime=130301249344430000&Build=20885" "exe" "/quiet"
 #DownloadInstall 'https://github.com/msysgit/msysgit/releases/download/Git-1.9.2-preview20140411/Git-1.9.2-preview20140411.exe' "exe" "/verysilent"
