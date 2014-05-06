@@ -53,7 +53,7 @@ try
     BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator
     BuildLibPNG $buildDir $outputPath $libpngBase $cmakeGenerator
     BuildOpenSSL $buildDir $outputPath $opensslVersion $cmakeGenerator $true
-    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $false
+    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $true
     BuildPthreadsW32 $buildDir $outputPath $pthreadsWin32Base
     BuildEHS $buildDir $outputPath $cmakeGenerator $ENV:THREADS_PTHREADS_WIN32_LIBRARY
     BuildFreeRDPWebConnect $buildDir $outputPath $cmakeGenerator $ENV:THREADS_PTHREADS_WIN32_LIBRARY $ENV:EHS_ROOT_DIR
