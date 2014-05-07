@@ -34,13 +34,23 @@ try
     $msm_project_dir = "$solution_dir\FreeRDP-WebConnect-SetupModule"
     $msi_project_dir = "$solution_dir\FreeRDP-WebConnect-Installer"
     $msm_binaries_dir = "$msm_project_dir\Binaries"
+    $webroot_dir = "$msm_project_dir\WebRoot"
 
     $buildDir = "$basePath\Build"
 
-    del -Force "$msm_binaries_dir\*"
+    del -Force -Recurse "$msm_binaries_dir\*"
     copy "$buildDir\bin\*.dll" $msm_binaries_dir
     copy "$buildDir\bin\wsgate.exe" $msm_binaries_dir
     copy "$buildDir\bin\openssl.exe" $msm_binaries_dir
+
+    del -Force -Recurse "$webroot_dir\*"
+    $webroot_source_dir = "$buildDir\FreeRDP-WebConnect\wsgate\webroot"
+    copy "$webroot_source_dir\index.html" $webroot_dir
+    copy "$webroot_source_dir\favicon.ico" $webroot_dir
+    copy "$webroot_source_dir\*.png" $webroot_dir
+    copy -Recurse "$webroot_source_dir\js" $webroot_dir
+    copy -Recurse "$webroot_source_dir\css" $webroot_dir
+    copy -Recurse "$webroot_source_dir\images" $webroot_dir
 
     pushd .
     try
