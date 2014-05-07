@@ -25,7 +25,7 @@
 
     <Property Id="GENERATED_PASSWORD_PROPERTY_NAME" Value="GENERATED_PASSWORD.8BD3EFB0_E455_4744_AF44_D74A3FFC311A" />
 
-    <Property Id="REDIRECT_HTTPS" Value="1" />
+    <Property Id="REDIRECT_HTTPS" />
     <Property Id="HTTP_LISTENING_ADDRESS" Value="0.0.0.0" />
     <Property Id="HTTP_PORT" Value="8000" />
     <Property Id="HTTPS_LISTENING_ADDRESS" Value="0.0.0.0" />

@@ -53,7 +53,7 @@
     <CustomAction Property="HTTPS_LISTENING_ADDRESS" Value="[HTTPS_LISTENING_ADDRESS]" Id="setHTTPS_LISTENING_ADDRESS" Execute="immediate" />
 
     <Property Id="REDIRECT_HTTPS" />
-    <Configuration Name="REDIRECT_HTTPS_Property" Format="Text" NonNullable="yes" DefaultValue="1" />
+    <Configuration Name="REDIRECT_HTTPS_Property" Format="Text" NonNullable="no" />
     <Substitution Table="CustomAction" Row="setREDIRECT_HTTPS" Column="Target" Value="[=REDIRECT_HTTPS_Property]" />
     <CustomAction Property="REDIRECT_HTTPS" Value="[REDIRECT_HTTPS]" Id="setREDIRECT_HTTPS" Execute="immediate" />
 
