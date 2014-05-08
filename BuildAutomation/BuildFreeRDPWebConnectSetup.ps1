@@ -10,6 +10,7 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $basePath = "C:\OpenStack\build\FreeRDP-WebConnect"
 
 CheckDir $basePath
+pushd .
 try
 {
     cd $basePath
