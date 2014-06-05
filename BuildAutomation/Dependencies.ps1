@@ -30,7 +30,7 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $setBuild
         &cmake . -G $cmakeGenerator
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild zlib.sln /p:Configuration=Release
+        &msbuild zlib.sln /m /p:Configuration=Release
         if ($LastExitCode) { throw "msbuild failed" }
 
         copy "Release\*.dll" $outputPath
@@ -67,7 +67,7 @@ function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $setB
         &cmake . -G $cmakeGenerator
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild libpng.sln /p:Configuration=Release
+        &msbuild libpng.sln /m /p:Configuration=Release
         if ($LastExitCode) { throw "msbuild failed" }
 
         copy "Release\*.dll" $outputPath
@@ -193,7 +193,7 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $mo
         &git am "$patchesPath\0001-Fix-VS-12-compilation-bug.patch"
         if ($LastExitCode) { throw "git am failed" }
 
-        &msbuild FreeRDP.sln /p:Configuration=Release
+        &msbuild FreeRDP.sln /m /p:Configuration=Release
         if ($LastExitCode) { throw "MSBuild failed" }
 
         copy "Release\*.dll" $outputPath
@@ -271,7 +271,7 @@ function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $pthreadsW32Lib, $set
         &cmake . -G $cmakeGenerator -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib"
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild ehs.sln /p:Configuration=Release
+        &msbuild ehs.sln /m /p:Configuration=Release
         if ($LastExitCode) { throw "MSBuild failed" }
 
         if($setBuildEnvVars)
@@ -304,7 +304,7 @@ function BuildFreeRDPWebConnect($buildDir, $outputPath, $cmakeGenerator, $pthrea
         &cmake . -G $cmakeGenerator -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib" -DEHS_ROOT_DIR="$ehsRootDir"
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild wsgate.sln /p:Configuration=Release
+        &msbuild wsgate.sln /m /p:Configuration=Release
         if ($LastExitCode) { throw "MSBuild failed" }
 
         copy "Release\wsgate.exe" $outputPath
