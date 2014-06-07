@@ -52,7 +52,7 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $platform
 
 
 function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $platformToolset, 
-					 $setBuildEnvVars=$true, $hashSHA1=$null, $platform="Win32")
+                     $setBuildEnvVars=$true, $hashSHA1=$null, $platform="Win32")
 {
     $libpngUrl = "http://download.sourceforge.net/libpng/$libpngBase.zip"
     $libpngPath = "$ENV:Temp\$libpngBase.zip"
