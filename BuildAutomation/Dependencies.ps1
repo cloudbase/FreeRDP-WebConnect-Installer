@@ -9,7 +9,7 @@ function CopyBoostDlls($vsVersion, $outputPath, $boostLibs)
     }
 }
 
-function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $setBuildEnvVars=$true)
+function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $platformToolset, $setBuildEnvVars=$true, $hashMD5=$null, $platform="Win32")
 {
     $zlibUrl = "http://zlib.net/$zlibBase.tar.gz"
     $zlibPath = "$ENV:TEMP\$zlibBase.tar.gz"
@@ -20,6 +20,9 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $setBuild
         cd "$buildDir"
 
         ExecRetry { (new-object System.Net.WebClient).DownloadFile($zlibUrl, $zlibPath) }
+
+        if($hashMD5) { ChechFileHash $zlibPath $hashMD5 "MD5" }
+
         Expand7z $zlibPath
         del $zlibPath
         Expand7z "$zlibBase.tar"
@@ -27,10 +30,10 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $setBuild
 
         cd "$zlibBase"
 
-        &cmake . -G $cmakeGenerator
+        &cmake . -G $cmakeGenerator -T $platformToolset
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild zlib.sln /m /p:Configuration=Release
+        &msbuild zlib.sln /m /p:Configuration=Release /p:Platform=$platform
         if ($LastExitCode) { throw "msbuild failed" }
 
         copy "Release\*.dll" $outputPath
@@ -48,7 +51,8 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $setBuild
 }
 
 
-function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $setBuildEnvVars=$true)
+function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $platformToolset, 
+					 $setBuildEnvVars=$true, $hashSHA1=$null, $platform="Win32")
 {
     $libpngUrl = "http://download.sourceforge.net/libpng/$libpngBase.zip"
     $libpngPath = "$ENV:Temp\$libpngBase.zip"
@@ -59,15 +63,18 @@ function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $setB
         cd "$buildDir"
 
         ExecRetry { (new-object System.Net.WebClient).DownloadFile($libpngUrl, $libpngPath) }
+
+        if($hashSHA1) { ChechFileHash $libpngPath $hashSHA1 "SHA1" }
+
         Expand7z $libpngPath
         del $libpngPath
 
         cd $libpngBase
 
-        &cmake . -G $cmakeGenerator
+        &cmake . -G $cmakeGenerator -T $platformToolset
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild libpng.sln /m /p:Configuration=Release
+        &msbuild libpng.sln /m /p:Configuration=Release /p:Platform=$platform
         if ($LastExitCode) { throw "msbuild failed" }
 
         copy "Release\*.dll" $outputPath
@@ -123,7 +130,8 @@ function GetCPPRestSDK($vsVersion, $buildDir, $outputPath, $cpprestsdkVersion, $
 }
 
 
-function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, $runTests=$true)
+function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, $platformToolset,
+                      $dllBuild=$true, $runTests=$true, $hash=$null)
 {
     $opensslBase = "openssl-$opensslVersion"
     $opensslPath = "$ENV:Temp\$opensslBase.tar.gz"
@@ -135,13 +143,16 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
         cd $buildDir
 
         ExecRetry { (new-object System.Net.WebClient).DownloadFile($opensslUrl, $opensslPath) }
+
+        if($hash) { ChechFileHash $opensslPath $hash }
+
         Expand7z $opensslPath
         del $opensslPath
         Expand7z "$opensslBase.tar"
         del "$opensslBase.tar"
 
         cd $opensslBase
-        &cmake . -G $cmakeGenerator
+        &cmake . -G $cmakeGenerator -T $platformToolset
 
         &perl Configure VC-WIN32 --prefix="$ENV:OPENSSL_ROOT_DIR"
         if ($LastExitCode) { throw "perl failed" }
@@ -149,16 +160,25 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
         &.\ms\do_nasm
         if ($LastExitCode) { throw "do_nasm failed" }
 
-        &nmake -f ms\ntdll.mak
+        if($dllBuild)
+        {
+            $makFile = "ms\ntdll.mak"
+        }
+        else
+        {
+            $makFile = "ms\nt.mak"
+        }
+
+        &nmake -f $makFile
         if ($LastExitCode) { throw "nmake failed" }
 
         if($runTests)
         {
-            &nmake -f ms\ntdll.mak test
+            &nmake -f $makFile test
             if ($LastExitCode) { throw "nmake test failed" }
         }
 
-        &nmake -f ms\ntdll.mak install
+        &nmake -f $makFile install
         if ($LastExitCode) { throw "nmake install failed" }
 
         copy "$ENV:OPENSSL_ROOT_DIR\bin\*.dll" $outputPath
@@ -171,8 +191,8 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
 }
 
 
-function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $monolithicBuild=$true,
-                      $buildSharedLibs=$true, $setBuildEnvVars=$true)
+function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $platformToolset, $monolithicBuild=$true,
+                      $buildSharedLibs=$true, $setBuildEnvVars=$true, $platform="Win32")
 {
     $freeRDPdir = "FreeRDP"
     $freeRDPUrl = "https://github.com/FreeRDP/FreeRDP.git"
@@ -187,15 +207,16 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $mo
         if($monolithicBuild) { $monolithicBuildStr = "ON" } else { $monolithicBuildStr = "OFF" }
         if($buildSharedLibs) { $buildSharedLibsStr = "ON" } else { $buildSharedLibsStr = "OFF" }
 
-        &cmake . -DBUILD_SHARED_LIBS=ON -G $cmakeGenerator -DMONOLITHIC_BUILD="$monolithicBuildStr" -DDBUILD_SHARED_LIBS="$buildSharedLibs"
+        &cmake . -DBUILD_SHARED_LIBS=ON -G $cmakeGenerator -T $platformToolset -DMONOLITHIC_BUILD="$monolithicBuildStr" -DBUILD_SHARED_LIBS="$buildSharedLibsStr"
         if ($LastExitCode) { throw "cmake failed" }
 
         &git am "$patchesPath\0001-Fix-VS-12-compilation-bug.patch"
         if ($LastExitCode) { throw "git am failed" }
 
-        &msbuild FreeRDP.sln /m /p:Configuration=Release
+        &msbuild FreeRDP.sln /m /p:Configuration=Release /p:Platform=$platform
         if ($LastExitCode) { throw "MSBuild failed" }
 
+        copy "LICENSE" $outputPath
         copy "Release\*.dll" $outputPath
         copy "Release\*.exe" $outputPath
 
@@ -220,7 +241,7 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $mo
 }
 
 
-function BuildPthreadsW32($buildDir, $outputPath, $pthreadsWin32Base, $setBuildEnvVars=$true)
+function BuildPthreadsW32($buildDir, $outputPath, $pthreadsWin32Base, $hashMD5=$null, $setBuildEnvVars=$true)
 {
     $pthreadsWin32Url = "ftp://sourceware.org/pub/pthreads-win32/$pthreadsWin32Base.zip"
     $pthreadsWin32Path = "$ENV:Temp\$pthreadsWin32Base.zip"
@@ -233,6 +254,9 @@ function BuildPthreadsW32($buildDir, $outputPath, $pthreadsWin32Base, $setBuildE
         cd $pthreadsWin32Base
 
         ExecRetry { (new-object System.Net.WebClient).DownloadFile($pthreadsWin32Url, $pthreadsWin32Path) }
+
+        if($hashMD5) { ChechFileHash $pthreadsWin32Path $hashMD5 "MD5" }
+
         Expand7z $pthreadsWin32Path
         del $pthreadsWin32Path
 
@@ -256,7 +280,7 @@ function BuildPthreadsW32($buildDir, $outputPath, $pthreadsWin32Base, $setBuildE
 }
 
 
-function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $pthreadsW32Lib, $setBuildEnvVars=$true)
+function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $platformToolset, $pthreadsW32Lib, $setBuildEnvVars=$true, $platform="Win32")
 {
     $ehsDir = "EHS"
     $ehsUrl = "https://github.com/cloudbase/EHS.git"
@@ -268,10 +292,10 @@ function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $pthreadsW32Lib, $set
         ExecRetry { GitClonePull $ehsDir $ehsUrl }
         cd $ehsDir
 
-        &cmake . -G $cmakeGenerator -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib"
+        &cmake . -G $cmakeGenerator -T $platformToolset -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib"
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild ehs.sln /m /p:Configuration=Release
+        &msbuild ehs.sln /m /p:Configuration=Release /p:Platform=$platform
         if ($LastExitCode) { throw "MSBuild failed" }
 
         if($setBuildEnvVars)
@@ -289,7 +313,7 @@ function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $pthreadsW32Lib, $set
 }
 
 
-function BuildFreeRDPWebConnect($buildDir, $outputPath, $cmakeGenerator, $pthreadsW32Lib, $ehsRootDir)
+function BuildFreeRDPWebConnect($buildDir, $outputPath, $cmakeGenerator, $platformToolset, $pthreadsW32Lib, $ehsRootDir, $platform="Win32")
 {
     $freeRDPWebConnectDir = "FreeRDP-WebConnect"
     $freeRDPWebConnectUrl = "https://github.com/cloudbase/FreeRDP-WebConnect.git"
@@ -301,10 +325,10 @@ function BuildFreeRDPWebConnect($buildDir, $outputPath, $cmakeGenerator, $pthrea
         ExecRetry { GitClonePull $freeRDPWebConnectDir $freeRDPWebConnectUrl }
         cd "$freeRDPWebConnectDir\wsgate"
 
-        &cmake . -G $cmakeGenerator -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib" -DEHS_ROOT_DIR="$ehsRootDir"
+        &cmake . -G $cmakeGenerator -T $platformToolset -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib" -DEHS_ROOT_DIR="$ehsRootDir"
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild wsgate.sln /m /p:Configuration=Release
+        &msbuild wsgate.sln /m /p:Configuration=Release /p:Platform=$platform
         if ($LastExitCode) { throw "MSBuild failed" }
 
         copy "Release\wsgate.exe" $outputPath

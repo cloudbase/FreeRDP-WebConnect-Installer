@@ -17,13 +17,18 @@ $ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake 2.8\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\nasm"
 
 $vsVersion = "12.0"
+$platform = "Win32"
+$platformToolset = "v$($vsVersion.Replace('.', ''))"
 
 $zlibBase = "zlib-1.2.8"
+$zlibMD5 = "44d667c142d7cda120332623eab69f40"
 $libpngBase = "lpng1610"
+$libpngSHA1 = "d44d11ad12c27936254c529288d6d044978f3f38"
 $pthreadsWin32Base = "pthreads-w32-2-9-1-release"
+$pthreadsWin32MD5 = "a3cb284ba0914c9d26e0954f60341354"
 $cpprestsdkVersion = "2.0.1"
-$cpprestsdkArch = "Win32"
-$opensslVersion = "1.0.1g"
+$opensslVersion = "1.0.1h"
+$opensslSha1 = "b2239599c8bf8f7fc48590a55205c26abe560bf8"
 
 $ENV:BOOST_ROOT="C:\local\boost_1_55_0"
 $ENV:BOOST_LIBRARYDIR="$ENV:BOOST_ROOT\lib32-msvc-$vsVersion"
@@ -48,15 +53,15 @@ try
     cd $buildDir
     mkdir $outputPath
 
-    GetCPPRestSDK $vsVersion $buildDir $outputPath $cpprestsdkVersion $cpprestsdkArch
+    GetCPPRestSDK $vsVersion $buildDir $outputPath $cpprestsdkVersion $platform
     CopyBoostDlls $vsVersion $outputPath @("date_time", "filesystem", "program_options", "regex", "system")
-    BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator
-    BuildLibPNG $buildDir $outputPath $libpngBase $cmakeGenerator
-    BuildOpenSSL $buildDir $outputPath $opensslVersion $cmakeGenerator $true
-    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $true
-    BuildPthreadsW32 $buildDir $outputPath $pthreadsWin32Base
-    BuildEHS $buildDir $outputPath $cmakeGenerator $ENV:THREADS_PTHREADS_WIN32_LIBRARY
-    BuildFreeRDPWebConnect $buildDir $outputPath $cmakeGenerator $ENV:THREADS_PTHREADS_WIN32_LIBRARY $ENV:EHS_ROOT_DIR
+    BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator $platformToolset $true $zlibMD5 $platform
+    BuildLibPNG $buildDir $outputPath $libpngBase $cmakeGenerator $platformToolset $true $libpngSHA1 $platform
+    BuildOpenSSL $buildDir $outputPath $opensslVersion $cmakeGenerator $platformToolset $true $true $opensslSha1
+    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $platformToolset $true $true $true $platform
+    BuildPthreadsW32 $buildDir $outputPath $pthreadsWin32Base $pthreadsWin32MD5
+    BuildEHS $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $true $platform
+    BuildFreeRDPWebConnect $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $ENV:EHS_ROOT_DIR $platform
 }
 finally
 {

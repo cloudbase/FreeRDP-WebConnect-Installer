@@ -1,22 +1,22 @@
 function CheckRemoveDir($path)
 {
-	if (Test-Path $path) {
-		Remove-Item -Recurse -Force $path
-	}
+    if (Test-Path $path) {
+        Remove-Item -Recurse -Force $path
+    }
 }
 
 function CheckCopyDir($src, $dest)
 {
-	CheckRemoveDir $dest
-	Copy-Item $src $dest -Recurse
+    CheckRemoveDir $dest
+    Copy-Item $src $dest -Recurse
 }
 
 function CheckDir($path)
 {
-	if (!(Test-Path -path $path))
-	{
-		mkdir $path
-	}
+    if (!(Test-Path -path $path))
+    {
+        mkdir $path
+    }
 }
 
 function GitClonePull($path, $url, $branch="master")
@@ -34,7 +34,7 @@ function GitClonePull($path, $url, $branch="master")
 
     if ($needspull)
     {
-		pushd .
+        pushd .
         try
         {
             cd $path
@@ -71,7 +71,7 @@ function GitClonePull($path, $url, $branch="master")
 
 function PullInstall($path, $url)
 {
-	GitClonePull $path $url
+    GitClonePull $path $url
 
     pushd .
     try
@@ -102,22 +102,22 @@ function PullInstall($path, $url)
 
 function Expand7z($archive, $outputDir = ".")
 {
-	pushd .
-	try
-	{
-		cd $outputDir
-		&7z.exe x -y $archive
-		if ($LastExitCode) { throw "7z.exe failed on archive: $archive"}
-	}
-	finally
-	{
-		popd
-	}
+    pushd .
+    try
+    {
+        cd $outputDir
+        &7z.exe x -y $archive
+        if ($LastExitCode) { throw "7z.exe failed on archive: $archive"}
+    }
+    finally
+    {
+        popd
+    }
 }
 
 function PullRelease($project, $release, $version)
 {
-	pushd .
+    pushd .
     try
     {
         $projectVer = "$project-$version"
@@ -125,9 +125,7 @@ function PullRelease($project, $release, $version)
         $tgzFile = "$tarFile.gz"
         $url = "https://launchpad.net/$project/$release/$version/+download/$tgzFile"
 
-        Write-Host "Downloading: $url"
-
-        Invoke-WebRequest -uri $url -OutFile $tgzFile
+        DownloadFile $url "$pwd\$tgzFile"
 
         Expand7z $tgzFile
         Remove-Item -Force $tgzFile
@@ -144,7 +142,7 @@ function PullRelease($project, $release, $version)
 
 function InstallRelease($project, $version)
 {
-	pushd .
+    pushd .
     try
     {
         $projectVer = "$project-$version"
@@ -169,13 +167,13 @@ function PullInstallRelease($project, $release, $version)
 
 function PipInstall($python_dir, $package)
 {
-	python "$python_dir\Scripts\pip-script.py" install $package --force
-	if ($LastExitCode) { throw "pip install failed on package: $package" }
+    python "$python_dir\Scripts\pip-script.py" install $package --force
+    if ($LastExitCode) { throw "pip install failed on package: $package" }
 }
 
 function SetVCVars($version="12.0")
 {
-	pushd "$ENV:ProgramFiles (x86)\Microsoft Visual Studio $version\VC\"
+    pushd "$ENV:ProgramFiles (x86)\Microsoft Visual Studio $version\VC\"
     try
     {
         cmd /c "vcvarsall.bat&set" |
@@ -193,24 +191,24 @@ function SetVCVars($version="12.0")
 
 function ReplaceVSToolSet($toolset)
 {
-	Get-ChildItem -Filter *.vcxproj -Recurse |
-	Foreach-Object {
-		$vcxprojfile = $_.FullName
-		(Get-Content $vcxprojfile) |
-		Foreach-Object {$_ -replace "<PlatformToolset>[^<]+</PlatformToolset>", "<PlatformToolset>$toolset</PlatformToolset>"} |
-		Set-Content $vcxprojfile
-	}
+    Get-ChildItem -Filter *.vcxproj -Recurse |
+    Foreach-Object {
+        $vcxprojfile = $_.FullName
+        (Get-Content $vcxprojfile) |
+        Foreach-Object {$_ -replace "<PlatformToolset>[^<]+</PlatformToolset>", "<PlatformToolset>$toolset</PlatformToolset>"} |
+        Set-Content $vcxprojfile
+    }
 }
 
 function SetRuntimeLibrary($runtimeLibrary)
 {
-	Get-ChildItem -Filter *.vcxproj -Recurse |
-	Foreach-Object {
-		$vcxprojfile = $_.FullName
-		(Get-Content $vcxprojfile) |
-		Foreach-Object {$_ -replace "<RuntimeLibrary>[^<]+</RuntimeLibrary>", "<RuntimeLibrary>$runtimeLibrary</RuntimeLibrary>"} |
-		Set-Content $vcxprojfile
-	}
+    Get-ChildItem -Filter *.vcxproj -Recurse |
+    Foreach-Object {
+        $vcxprojfile = $_.FullName
+        (Get-Content $vcxprojfile) |
+        Foreach-Object {$_ -replace "<RuntimeLibrary>[^<]+</RuntimeLibrary>", "<RuntimeLibrary>$runtimeLibrary</RuntimeLibrary>"} |
+        Set-Content $vcxprojfile
+    }
 }
 
 function PatchFromGitCommit($sourcePath, $destPath, $gitRef, $gerritUrl, $gerritRef, $filesToPatch)
@@ -294,60 +292,60 @@ function GetCredentialsFromFile($path)
 
 function RunCommand($cmd, $arguments, $expectedExitCode = 0)
 {
-	Write-Host "Executing: $cmd $arguments"
+    Write-Host "Executing: $cmd $arguments"
 
-	$p = Start-Process -Wait -PassThru -NoNewWindow $cmd -ArgumentList $arguments
-	if($p.ExitCode -ne $expectedExitCode)
-	{
-		throw "$cmd failed with exit code: $($p.ExitCode)"
-	}
+    $p = Start-Process -Wait -PassThru -NoNewWindow $cmd -ArgumentList $arguments
+    if($p.ExitCode -ne $expectedExitCode)
+    {
+        throw "$cmd failed with exit code: $($p.ExitCode)"
+    }
 }
 
 function DownloadFile($url, $dest)
 {
-	Write-Host "Downloading: $url"
+    Write-Host "Downloading: $url"
 
-	$webClient = New-Object System.Net.webclient
-	$webClient.DownloadFile($url, $dest)
+    $webClient = New-Object System.Net.webclient
+    $webClient.DownloadFile($url, $dest)
 }
 
 function DownloadInstall($url, $type, $arguments="")
 {
-	$guid = [System.Guid]::NewGuid().ToString()
-	$path = "$guid.$type"
+    $guid = [System.Guid]::NewGuid().ToString()
+    $path = "$guid.$type"
 
-	try
-	{
+    try
+    {
 
-		ExecRetry { DownloadFile $url $path }
-		if($type -eq "msi")
-		{
-			if(!$arguments)
-			{
-				$arguments = "/qn"
-			}
-			ExecRetry { RunCommand "msiexec.exe" "/i $path $arguments" }
-		}
-		else
-		{
-			ExecRetry { RunCommand $path $arguments }
-		}
-	}
-	finally
-	{
-		if(test-Path $path) { del $path }
-	}
+        ExecRetry { DownloadFile $url $path }
+        if($type -eq "msi")
+        {
+            if(!$arguments)
+            {
+                $arguments = "/qn"
+            }
+            ExecRetry { RunCommand "msiexec.exe" "/i $path $arguments" }
+        }
+        else
+        {
+            ExecRetry { RunCommand $path $arguments }
+        }
+    }
+    finally
+    {
+        if(test-Path $path) { del $path }
+    }
 }
 
 function ChocolateyInstall($package)
 {
-	ExecRetry {
-		&cinst $package
-		if($lastexitcode)
-		{
-			throw "cinst failed with exit code: $lastexitcode"
-		}
-	}
+    ExecRetry {
+        &cinst $package
+        if($lastexitcode)
+        {
+            throw "cinst failed with exit code: $lastexitcode"
+        }
+    }
 }
 
 function ImportCertificateUser($pfxPath, $pfxPassword) {
@@ -362,4 +360,11 @@ function ImportCertificateUser($pfxPath, $pfxPassword) {
     $store.Add($cert)
 
     return $cert.Thumbprint
+}
+
+function ChechFileHash($path, $hash, $algorithm="SHA1") {
+    $h = Get-Filehash -Algorithm $algorithm $path
+    if ($h.Hash.ToUpper() -ne $hash.ToUpper()) {
+        throw "Hash comparison failed for file: $path"
+    }
 }
