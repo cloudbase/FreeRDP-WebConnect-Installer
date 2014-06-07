@@ -192,7 +192,7 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
 
 
 function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $platformToolset, $monolithicBuild=$true,
-                      $buildSharedLibs=$true, $setBuildEnvVars=$true, $platform="Win32")
+                      $buildSharedLibs=$true, $staticRuntime=$false, $setBuildEnvVars=$true, $platform="Win32")
 {
     $freeRDPdir = "FreeRDP"
     $freeRDPUrl = "https://github.com/FreeRDP/FreeRDP.git"
@@ -206,8 +206,9 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $pl
 
         if($monolithicBuild) { $monolithicBuildStr = "ON" } else { $monolithicBuildStr = "OFF" }
         if($buildSharedLibs) { $buildSharedLibsStr = "ON" } else { $buildSharedLibsStr = "OFF" }
+        if($staticRuntime) { $runtime = "static" } else { $runtime = "dynamic" }
 
-        &cmake . -DBUILD_SHARED_LIBS=ON -G $cmakeGenerator -T $platformToolset -DMONOLITHIC_BUILD="$monolithicBuildStr" -DBUILD_SHARED_LIBS="$buildSharedLibsStr"
+        &cmake . -DBUILD_SHARED_LIBS=ON -G $cmakeGenerator -T $platformToolset -DMONOLITHIC_BUILD="$monolithicBuildStr" -DBUILD_SHARED_LIBS="$buildSharedLibsStr" -DMSVC_RUNTIME="$runtime"
         if ($LastExitCode) { throw "cmake failed" }
 
         &git am "$patchesPath\0001-Fix-VS-12-compilation-bug.patch"
