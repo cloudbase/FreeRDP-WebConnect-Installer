@@ -47,7 +47,8 @@ try
     del -Force -Recurse "$webroot_dir\*"
     $webroot_source_dir = "$buildDir\FreeRDP-WebConnect\wsgate\webroot"
     copy "$webroot_source_dir\index.html" $webroot_dir
-    copy "$webroot_source_dir\*.png" -Exclude "FreeRDP_Logo.png" $webroot_dir
+    copy "$webroot_source_dir\favicon.ico" $webroot_dir
+    copy "$webroot_source_dir\*.png" $webroot_dir
     copy -Recurse "$webroot_source_dir\js" $webroot_dir
     copy -Recurse "$webroot_source_dir\css" $webroot_dir
     copy -Recurse "$webroot_source_dir\images" $webroot_dir
