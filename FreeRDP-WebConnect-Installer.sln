@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "FreeRDPWebConnectInstaller", "FreeRDP-WebConnect-Installer\FreeRDPWebConnectInstaller.wixproj", "{DF18941E-F795-4F5A-8766-96381D3C45DE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -12,7 +12,6 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "FreeRDPWebConnectSetupModul
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildAutomation", "BuildAutomation", "{E8DB9EEE-2373-4D0E-8148-8D7B8352380C}"
 	ProjectSection(SolutionItems) = preProject
-		BuildAutomation\0001-Fix-VS-12-compilation-bug.patch = BuildAutomation\0001-Fix-VS-12-compilation-bug.patch
 		BuildAutomation\BuildFreeRDPWebConnect.ps1 = BuildAutomation\BuildFreeRDPWebConnect.ps1
 		BuildAutomation\BuildFreeRDPWebConnectSetup.ps1 = BuildAutomation\BuildFreeRDPWebConnectSetup.ps1
 		BuildAutomation\BuildUtils.ps1 = BuildAutomation\BuildUtils.ps1

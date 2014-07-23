@@ -211,9 +211,6 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $pl
         &cmake . -G $cmakeGenerator -T $platformToolset -DMONOLITHIC_BUILD="$monolithicBuildStr" -DBUILD_SHARED_LIBS="$buildSharedLibsStr" -DMSVC_RUNTIME="$runtime" -DWITH_SSE2=ON -DBUILD_TESTING=OFF
         if ($LastExitCode) { throw "cmake failed" }
 
-        &git am "$patchesPath\0001-Fix-VS-12-compilation-bug.patch"
-        if ($LastExitCode) { throw "git am failed" }
-
         &msbuild FreeRDP.sln /m /p:Configuration=Release /p:Platform=$platform
         if ($LastExitCode) { throw "MSBuild failed" }
 
