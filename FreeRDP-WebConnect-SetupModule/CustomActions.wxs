@@ -30,13 +30,13 @@
               JScriptCall="removeUsersACEFromPathAction" Execute="deferred" Return="check" Impersonate="no" />
 
     <CustomAction Id="GenerateSelfSignedCert_Prop" Return="check" Property="GenerateSelfSignedCert"
-                  Value="[BINARIESDIR]|[WEBCONNECT_HTTPS_CERT_FILE]" />
+                  Value="[BINARIESDIR]|[WEBCONNECTCONFDIR]server.cer" />
     <CustomAction Id="GenerateSelfSignedCert"
               BinaryKey="X509Actions"
               JScriptCall="generateSelfSignedX509CertAction" Execute="deferred" Return="check" Impersonate="no" />
 
     <CustomAction Id="GenerateWSGateConfFile_Prop" Return="check" Property="GenerateWSGateConfFile"
-                  Value="[WEBCONNECTCONFDIR]|[WEBROOTDIR]|[HTTP_LISTENING_ADDRESS]|[HTTP_PORT]|[REDIRECT_HTTPS]|[HTTPS_LISTENING_ADDRESS]|[HTTPS_PORT]|[WEBCONNECT_HTTPS_CERT_FILE]|[OPENSTACK_AUTH_URL]|[OPENSTACK_TENANT_NAME]|[OPENSTACK_USERNAME]|[OPENSTACK_PASSWORD]|[HYPERV_HOST_USERNAME]|[HYPERV_HOST_PASSWORD]" />
+                  Value="[WEBCONNECTCONFDIR]|[WEBROOTDIR]|[HTTP_LISTENING_ADDRESS]|[HTTP_PORT]|[REDIRECT_HTTPS]|[HTTPS_LISTENING_ADDRESS]|[HTTPS_PORT]|[WEBCONNECTCONFDIR]server.cer|[OPENSTACK_AUTH_URL]|[OPENSTACK_TENANT_NAME]|[OPENSTACK_USERNAME]|[OPENSTACK_PASSWORD]|[HYPERV_HOST_USERNAME]|[HYPERV_HOST_PASSWORD]" />
     <CustomAction Id="GenerateWSGateConfFile"
               BinaryKey="ConfFileActions"
               JScriptCall="writeWSGateConfFileAction" Execute="deferred" Return="check" Impersonate="no" />

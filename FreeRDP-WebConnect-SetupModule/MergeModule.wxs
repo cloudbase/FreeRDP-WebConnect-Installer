@@ -94,8 +94,6 @@
 
     <Property Id="GENERATED_PASSWORD" Hidden="yes" />
 
-    <SetProperty Id="WEBCONNECT_HTTPS_CERT_FILE" After="AppSearch" Value="[WEBCONNECTCONFDIR]server.cer" />
-
     <InstallExecuteSequence>
       <Custom Action="setHTTP_PORT" After="LaunchConditions" />
       <Custom Action="setHTTP_LISTENING_ADDRESS" After="LaunchConditions" />
