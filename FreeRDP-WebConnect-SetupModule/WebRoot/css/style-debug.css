@@ -222,7 +222,6 @@ td { vertical-align: top; }
 html {
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 body {
     background-image:url(http://www.cloudbase.it/wp-content/uploads/2012/10/background33.jpg);
@@ -230,7 +229,6 @@ body {
     font-size: 10pt;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     margin:0;
 
 }
