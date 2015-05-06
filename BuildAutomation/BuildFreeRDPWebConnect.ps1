@@ -44,6 +44,7 @@ $outputPath = "$buildDir\bin"
 
 $ENV:OPENSSL_ROOT_DIR="$outputPath\OpenSSL"
 
+$freerdpBranch = "stable-1.1"
 
 pushd .
 try
@@ -58,7 +59,7 @@ try
     BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator $platformToolset $true $zlibMD5 $platform
     BuildLibPNG $buildDir $outputPath $libpngBase $cmakeGenerator $platformToolset $true $libpngSHA1 $platform
     BuildOpenSSL $buildDir $outputPath $opensslVersion $cmakeGenerator $platformToolset $true $true $opensslSha1
-    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $platformToolset $true $true $false $true $platform
+    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $platformToolset $true $true $false $true $platform $freerdpBranch
     BuildPthreadsW32 $buildDir $outputPath $pthreadsWin32Base $pthreadsWin32MD5
     BuildEHS $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $true $platform
     BuildFreeRDPWebConnect $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $ENV:EHS_ROOT_DIR $platform

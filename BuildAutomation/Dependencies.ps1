@@ -192,7 +192,7 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
 
 
 function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $platformToolset, $monolithicBuild=$true,
-                      $buildSharedLibs=$true, $staticRuntime=$false, $setBuildEnvVars=$true, $platform="Win32")
+                      $buildSharedLibs=$true, $staticRuntime=$false, $setBuildEnvVars=$true, $platform="Win32", $branch="master")
 {
     $freeRDPdir = "FreeRDP"
     $freeRDPUrl = "https://github.com/FreeRDP/FreeRDP.git"
@@ -201,7 +201,7 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $pl
     try
     {
         cd $buildDir
-        ExecRetry { GitClonePull $freeRDPdir $freeRDPUrl }
+        ExecRetry { GitClonePull $freeRDPdir $freeRDPUrl $branch }
         cd $freeRDPdir
 
         if($monolithicBuild) { $monolithicBuildStr = "ON" } else { $monolithicBuildStr = "OFF" }
