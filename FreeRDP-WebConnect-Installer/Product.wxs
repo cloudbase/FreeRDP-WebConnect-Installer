@@ -6,15 +6,15 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" CompressionLevel="mszip" />
 
-    <Feature Id="VC120Redist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1"
-             Absent="disallow" InstallDefault="followParent" TypicalDefault="install">
-      <MergeRef Id="VC120Redist" />
-    </Feature>
-
     <Feature Id="FreeRDPWebConnect" Title="FreeRDP-WebConnect" Level="1" Absent="disallow" InstallDefault="local" TypicalDefault="install" AllowAdvertise="no"
              Description="Installs and configures the FreeRDP-WebConnect HTML5 gateway service."
              ConfigurableDirectory="INSTALLDIR" Display="expand">
       <MergeRef Id="FreeRDPWebConnectSetupModule" />
+
+      <Feature Id="VC120Redist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1"
+               Absent="disallow" InstallDefault="followParent" TypicalDefault="install">
+        <MergeRef Id="VC120Redist" />
+      </Feature>
     </Feature>
 
     <UIRef Id="MyWixUI_FeatureTree" />
