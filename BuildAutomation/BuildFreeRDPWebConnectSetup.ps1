@@ -20,12 +20,8 @@ try
     cd $basePath
 
     $ENV:PATH += ";$ENV:ProgramFiles (x86)\Git\bin\"
-    $ENV:PATH += ";C:\Tools\AlexFTPS-1.1.0"
-
     # Needed for SSH
     $ENV:HOME = $ENV:USERPROFILE
-
-    $ftpsCredentials = GetCredentialsFromFile "$ENV:UserProfile\ftps.txt"
 
     SetVCVars
 
@@ -92,14 +88,6 @@ try
     else
     {
         Write-Warning "MSI not signed"
-    }
-
-    $ftpsUsername = $ftpsCredentials.UserName
-    $ftpsPassword = $ftpsCredentials.GetNetworkCredential().Password
-
-    ExecRetry {
-        &ftps -h www.cloudbase.it -ssl All -U $ftpsUsername -P $ftpsPassword -sslInvalidServerCertHandling Accept -p $msi_path /cloudbase.it/main/downloads/FreeRDPWebConnect_Beta.msi
-        if ($LastExitCode) { throw "ftps failed" }
     }
 }
 finally
