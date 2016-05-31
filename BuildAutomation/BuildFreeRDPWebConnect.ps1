@@ -13,6 +13,7 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $ENV:PATH = "C:\Perl\bin;$ENV:PATH"
 $ENV:PATH += ";$ENV:ProgramFiles\7-Zip"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\Git\bin"
+$ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake 2.8\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\nasm"
 
@@ -27,8 +28,8 @@ $libpngSHA1 = "d44d11ad12c27936254c529288d6d044978f3f38"
 $pthreadsWin32Base = "pthreads-w32-2-9-1-release"
 $pthreadsWin32MD5 = "a3cb284ba0914c9d26e0954f60341354"
 $cpprestsdkVersion = "2.0.1"
-$opensslVersion = "1.0.1h"
-$opensslSha1 = "b2239599c8bf8f7fc48590a55205c26abe560bf8"
+$opensslVersion = "1.0.2h"
+$opensslSha1 = "577585f5f5d299c44dd3c993d3c0ac7a219e4949"
 
 $ENV:BOOST_ROOT="C:\local\boost_1_55_0"
 $ENV:BOOST_LIBRARYDIR="$ENV:BOOST_ROOT\lib32-msvc-$vsVersion"

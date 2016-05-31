@@ -51,7 +51,7 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $platform
 }
 
 
-function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $platformToolset, 
+function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $platformToolset,
                      $setBuildEnvVars=$true, $hashSHA1=$null, $platform="Win32")
 {
     $libpngUrl = "http://download.sourceforge.net/libpng/$libpngBase.zip"
@@ -133,15 +133,17 @@ function GetCPPRestSDK($vsVersion, $buildDir, $outputPath, $cpprestsdkVersion, $
 function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, $platformToolset,
                       $dllBuild=$true, $runTests=$true, $hash=$null)
 {
-    $opensslBase = "openssl-$opensslVersion"
-    $opensslPath = "$ENV:Temp\$opensslBase.tar.gz"
-    $opensslUrl = "http://www.openssl.org/source/$opensslBase.tar.gz"
+    $opensslBase = "openssl-${opensslVersion}"
+    $opensslPath = "$ENV:Temp\${opensslBase}.tar.gz"
+    $opensslUrl = "https://www.openssl.org/source/${opensslBase}.tar.gz"
 
     pushd .
     try
     {
         cd $buildDir
 
+        # Needed by the OpenSSL server
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         ExecRetry { (new-object System.Net.WebClient).DownloadFile($opensslUrl, $opensslPath) }
 
         if($hash) { ChechFileHash $opensslPath $hash }
