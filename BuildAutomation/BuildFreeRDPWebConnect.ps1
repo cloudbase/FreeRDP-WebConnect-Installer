@@ -21,7 +21,6 @@ $ENV:PATH = "C:\Perl\bin;$ENV:PATH"
 $ENV:PATH += ";$ENV:ProgramFiles\7-Zip"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\Git\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake\bin"
-$ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake 2.8\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\nasm"
 
 $vsVersion = "${VSVersionNumber}.0"
