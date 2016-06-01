@@ -33,7 +33,7 @@ try
         GitClonePull "FreeRDP-WebConnect-Installer" "git@github.com:/cloudbase/FreeRDP-WebConnect-Installer.git"
     }
 
-    $solution_dir = "FreeRDP-WebConnect-Installer"
+    $solution_dir = Resolve-Path "FreeRDP-WebConnect-Installer"
     $msm_project_dir = "$solution_dir\FreeRDP-WebConnect-SetupModule"
     $msi_project_dir = "$solution_dir\FreeRDP-WebConnect-Installer"
     $msm_binaries_dir = "$msm_project_dir\Binaries"
