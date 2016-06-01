@@ -54,23 +54,10 @@ try
     copy -Recurse "$webroot_source_dir\css" $webroot_dir
     copy -Recurse "$webroot_source_dir\images" $webroot_dir
 
-    pushd .
+    pushd $solution_dir
     try
     {
-        cd $msm_project_dir
-        &msbuild FreeRDPWebConnectSetupModule.wixproj /p:Platform=$Platform /p:Configuration=Release /p:DefineConstants=`"BinariesPath=Binaries`;WebRootPath=WebRoot`"
-        if ($LastExitCode) { throw "MSBuild failed" }
-    }
-    finally
-    {
-        popd
-    }
-
-    pushd .
-    try
-    {
-        cd $msi_project_dir
-        &msbuild FreeRDPWebConnectInstaller.wixproj /p:Platform=$Platform /p:Configuration=Release
+        &msbuild.exe FreeRDP-WebConnect-Installer.sln /p:Platform=$Platform /p:Configuration=Release /p:DefineConstants=`"BinariesPath=Binaries`;WebRootPath=WebRoot`"
         if ($LastExitCode) { throw "MSBuild failed" }
     }
     finally
