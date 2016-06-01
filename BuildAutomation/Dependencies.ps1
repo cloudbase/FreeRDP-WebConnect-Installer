@@ -130,12 +130,12 @@ function GetCPPRestSDK($vsVersion, $buildDir, $outputPath, $cpprestsdkVersion, $
 }
 
 
-function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, $platformToolset,
+function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $platform, $cmakeGenerator, $platformToolset,
                       $dllBuild=$true, $runTests=$true, $hash=$null)
 {
-    $opensslBase = "openssl-${opensslVersion}"
-    $opensslPath = "$ENV:Temp\${opensslBase}.tar.gz"
-    $opensslUrl = "https://www.openssl.org/source/${opensslBase}.tar.gz"
+    $opensslBase = "openssl-$opensslVersion"
+    $opensslPath = "$ENV:Temp\$opensslBase.tar.gz"
+    $opensslUrl = "https://www.openssl.org/source/$opensslBase.tar.gz"
 
     pushd .
     try
@@ -156,11 +156,24 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
         cd $opensslBase
         &cmake . -G $cmakeGenerator -T $platformToolset
 
-        &perl Configure VC-WIN32 --prefix="$ENV:OPENSSL_ROOT_DIR"
+        $platformMap = @{"x86"="VC-WIN32"; "amd64"="VC-WIN64A"; "x86_amd64"="VC-WIN64A"}
+        &perl Configure $platformMap[$platform] --prefix="$ENV:OPENSSL_ROOT_DIR"
         if ($LastExitCode) { throw "perl failed" }
 
-        &.\ms\do_nasm
-        if ($LastExitCode) { throw "do_nasm failed" }
+        if($platform -eq "amd64" -or $platform -eq "x86_amd64")
+        {
+            &.\ms\do_win64a
+            if ($LastExitCode) { throw "do_win64 failed" }
+        }
+        elseif($platform -eq "x86")
+        {
+            &.\ms\do_nasm
+            if ($LastExitCode) { throw "do_nasm failed" }
+        }
+        else
+        {
+            throw "Invalid platform: $platform"
+        }
 
         if($dllBuild)
         {
@@ -191,7 +204,6 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $cmakeGenerator, 
         popd
     }
 }
-
 
 function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $platformToolset, $monolithicBuild=$true,
                       $buildSharedLibs=$true, $staticRuntime=$false, $setBuildEnvVars=$true, $platform="Win32", $branch="master")

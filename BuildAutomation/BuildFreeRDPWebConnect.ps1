@@ -1,3 +1,10 @@
+Param(
+  [ValidateSet("x86", "amd64", "x86_amd64")]
+  [string]$Platform = "x86",
+  [ValidateSet(12, 14)]
+  [UInt16]$VSVersionNumber = 12
+)
+
 $ErrorActionPreference = "Stop"
 
 <#
@@ -17,9 +24,14 @@ $ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake 2.8\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\nasm"
 
-$vsVersion = "12.0"
-$platform = "Win32"
+$vsVersion = "${VSVersionNumber}.0"
+
+$cmakePlatformMap = @{"x86"=""; "amd64"=" Win64"; "x86_amd64"=" Win64"}
+$cmakeGenerator = "Visual Studio $($vsVersion.Split(".")[0])$($cmakePlatformMap[$Platform])"
 $platformToolset = "v$($vsVersion.Replace('.', ''))"
+
+$vsPlatformMap = @{"x86"="Win32"; "amd64"="x64"; "x86_amd64"="x64"}
+$vsPlatform = $vsPlatformMap[$Platform]
 
 $zlibBase = "zlib-1.2.8"
 $zlibMD5 = "44d667c142d7cda120332623eab69f40"
@@ -31,13 +43,14 @@ $cpprestsdkVersion = "2.0.1"
 $opensslVersion = "1.0.2h"
 $opensslSha1 = "577585f5f5d299c44dd3c993d3c0ac7a219e4949"
 
+
+$boostLibMap = @{"x86"="32"; "amd64"="64"; "x86_amd64"="64"}
 $ENV:BOOST_ROOT="C:\local\boost_1_55_0"
-$ENV:BOOST_LIBRARYDIR="$ENV:BOOST_ROOT\lib32-msvc-$vsVersion"
+$ENV:BOOST_LIBRARYDIR="$ENV:BOOST_ROOT\lib$($boostLibMap[$Platform])-msvc-$vsVersion"
 $ENV:LIB += ";$ENV:BOOST_LIBRARYDIR"
 $ENV:INCLUDE+= ";$ENV:BOOST_ROOT"
 
-$cmakeGenerator = "Visual Studio $($vsVersion.Split(".")[0])"
-SetVCVars $vsVersion
+SetVCVars $vsVersion $Platform
 
 $basePath = "C:\OpenStack\build\FreeRDP-WebConnect"
 $buildDir = "$basePath\Build"
@@ -55,15 +68,15 @@ try
     cd $buildDir
     mkdir $outputPath
 
-    GetCPPRestSDK $vsVersion $buildDir $outputPath $cpprestsdkVersion $platform
+    GetCPPRestSDK $vsVersion $buildDir $outputPath $cpprestsdkVersion $vsPlatform
     CopyBoostDlls $vsVersion $outputPath @("date_time", "filesystem", "program_options", "regex", "system")
-    BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator $platformToolset $true $zlibMD5 $platform
-    BuildLibPNG $buildDir $outputPath $libpngBase $cmakeGenerator $platformToolset $true $libpngSHA1 $platform
-    BuildOpenSSL $buildDir $outputPath $opensslVersion $cmakeGenerator $platformToolset $true $true $opensslSha1
-    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $platformToolset $true $true $false $true $platform $freerdpBranch
+    BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator $platformToolset $true $zlibMD5 $vsPlatform
+    BuildLibPNG $buildDir $outputPath $libpngBase $cmakeGenerator $platformToolset $true $libpngSHA1 $vsPlatform
+    BuildOpenSSL $buildDir $outputPath $opensslVersion $Platform $cmakeGenerator $platformToolset $true $true $opensslSha1
+    BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $platformToolset $true $true $false $true $vsPlatform $freerdpBranch
     BuildPthreadsW32 $buildDir $outputPath $pthreadsWin32Base $pthreadsWin32MD5
-    BuildEHS $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $true $platform
-    BuildFreeRDPWebConnect $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $ENV:EHS_ROOT_DIR $platform
+    BuildEHS $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $true $vsPlatform
+    BuildFreeRDPWebConnect $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $ENV:EHS_ROOT_DIR $vsPlatform
 }
 finally
 {
