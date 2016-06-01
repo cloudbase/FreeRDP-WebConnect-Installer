@@ -17,6 +17,7 @@ bld/
 [Oo]bj/
 
 FreeRDP-WebConnect-SetupModule/Binaries.wxs
+FreeRDP-WebConnect-SetupModule/Binaries_tmp.wxs
 FreeRDP-WebConnect-SetupModule/WebRoot.wxs
 
 # MSTest test Results
