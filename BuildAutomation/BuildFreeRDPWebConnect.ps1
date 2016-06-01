@@ -1,6 +1,6 @@
 Param(
   [ValidateSet("x86", "amd64", "x86_amd64")]
-  [string]$Platform = "x86",
+  [string]$Platform = "x86_amd64",
   [ValidateSet(12, 14)]
   [UInt16]$VSVersionNumber = 12
 )
