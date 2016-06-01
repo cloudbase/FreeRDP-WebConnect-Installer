@@ -1,5 +1,7 @@
 Param(
-  [string]$SignX509Thumbprint
+  [string]$SignX509Thumbprint,
+  [ValidateSet("x86", "x64")]
+  [string]$Platform = "x64"
 )
 
 $ErrorActionPreference = "Stop"
@@ -56,7 +58,7 @@ try
     try
     {
         cd $msm_project_dir
-        &msbuild FreeRDPWebConnectSetupModule.wixproj /p:Platform=x86 /p:Configuration=Release /p:DefineConstants=`"BinariesPath=Binaries`;WebRootPath=WebRoot`"
+        &msbuild FreeRDPWebConnectSetupModule.wixproj /p:Platform=$Platform /p:Configuration=Release /p:DefineConstants=`"BinariesPath=Binaries`;WebRootPath=WebRoot`"
         if ($LastExitCode) { throw "MSBuild failed" }
     }
     finally
@@ -68,7 +70,7 @@ try
     try
     {
         cd $msi_project_dir
-        &msbuild FreeRDPWebConnectInstaller.wixproj /p:Platform=x86 /p:Configuration=Release
+        &msbuild FreeRDPWebConnectInstaller.wixproj /p:Platform=$Platform /p:Configuration=Release
         if ($LastExitCode) { throw "MSBuild failed" }
     }
     finally
@@ -76,7 +78,7 @@ try
         popd
     }
 
-    $msi_path = "$msi_project_dir\bin\Release\FreeRDP-WebConnect-Installer.msi"
+    $msi_path = "$msi_project_dir\bin\${Platform}\Release\FreeRDP-WebConnect-Installer.msi"
 
     if($SignX509Thumbprint)
     {
