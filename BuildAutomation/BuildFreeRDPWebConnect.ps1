@@ -45,7 +45,7 @@ $opensslSha1 = "577585f5f5d299c44dd3c993d3c0ac7a219e4949"
 
 
 $boostLibMap = @{"x86"="32"; "amd64"="64"; "x86_amd64"="64"}
-$ENV:BOOST_ROOT="C:\local\boost_1_55_0"
+$ENV:BOOST_ROOT="C:\local\boost_1_61_0"
 $ENV:BOOST_LIBRARYDIR="$ENV:BOOST_ROOT\lib$($boostLibMap[$Platform])-msvc-$vsVersion"
 $ENV:LIB += ";$ENV:BOOST_LIBRARYDIR"
 $ENV:INCLUDE+= ";$ENV:BOOST_ROOT"
