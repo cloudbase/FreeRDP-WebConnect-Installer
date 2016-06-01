@@ -3,7 +3,7 @@
      xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension">
   <Module Id="FreeRDPWebConnectSetup" Language="0" Version="1.0.0.0">
     <Package Id="8bd3efb0-e455-4744-af44-d74a3ffc311a" Manufacturer="Cloudbase Solutions Srl" InstallerVersion="405"
-             InstallScope="perMachine" Platform="x86" InstallPrivileges="elevated" Languages="1033" SummaryCodepage="1252" />
+             InstallScope="perMachine" Platform="$(var.Platform)" InstallPrivileges="elevated" Languages="1033" SummaryCodepage="1252" />
 
     <ComponentGroupRef Id="BinariesComponentGroup" />
     <ComponentGroupRef Id="WebRootComponentGroup" />

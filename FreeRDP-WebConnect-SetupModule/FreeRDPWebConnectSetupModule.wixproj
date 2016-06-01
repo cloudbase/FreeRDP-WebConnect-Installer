@@ -13,14 +13,24 @@
     <Name>FreeRDPWebConnectSetupModule</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>BinariesPath=Binaries;WebRootPath=WebRoot</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>Debug</DefineConstants>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DefineConstants>BinariesPath=Binaries;WebRootPath=WebRoot</DefineConstants>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CustomActions.wxs" />
@@ -141,11 +151,12 @@
   <Target Name="BeforeBuild">
     <HeatDirectory DirectoryRefId="WEBROOTDIR" OutputFile="WebRoot.wxs" Directory="WebRoot" ComponentGroupName="WebRootComponentGroup" ToolPath="$(WixToolPath)" PreprocessorVariable="var.WebRootPath" GenerateGuidsNow="true" SuppressCom="true" SuppressRegistry="true" KeepEmptyDirectories="true" SuppressRootDirectory="true">
     </HeatDirectory>
-    <HeatDirectory DirectoryRefId="BINARIESDIR" OutputFile="Binaries.wxs" Directory="Binaries" ComponentGroupName="BinariesComponentGroup" ToolPath="$(WixToolPath)" PreprocessorVariable="var.BinariesPath" GenerateGuidsNow="true" SuppressCom="true" SuppressRegistry="true" KeepEmptyDirectories="true" SuppressRootDirectory="true" Transforms="Binaries.xslt">
+    <HeatDirectory DirectoryRefId="BINARIESDIR" OutputFile="Binaries_tmp.wxs" Directory="Binaries" ComponentGroupName="BinariesComponentGroup" ToolPath="$(WixToolPath)" PreprocessorVariable="var.BinariesPath" GenerateGuidsNow="true" SuppressCom="true" SuppressRegistry="true" KeepEmptyDirectories="true" SuppressRootDirectory="true">
     </HeatDirectory>
+    <XslTransformation XmlInputPaths="Binaries_tmp.wxs" XslInputPath="Binaries.xslt" OutputPaths="Binaries.wxs" Parameters="&lt;Parameter Name='platform' Value='$(Platform)'/&gt;" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "..\..\..\FreeRDP-WebConnect-Installer\"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)FreeRDP-WebConnect-Installer\"</PostBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.

@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="{0935139D-41F6-40C1-A8C5-218DD93F8C76}" Name="FreeRDP-WebConnect" Language="1033" Version="1.0.0.0" Manufacturer="Cloudbase Solutions Srl" UpgradeCode="1e4250fa-f5d7-43a0-9f6a-2ab8aac8e32c">
-    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
+    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" Platform="$(var.Platform)" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" CompressionLevel="mszip" />
+
+    <?if $(var.Platform) = x64 ?>
+    <?define Win64 = "yes" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+    <?else ?>
+    <?define Win64 = "no" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+    <?endif ?>
 
     <Feature Id="FreeRDPWebConnect" Title="FreeRDP-WebConnect" Level="1" Absent="disallow" InstallDefault="local" TypicalDefault="install" AllowAdvertise="no"
              Description="Installs and configures the FreeRDP-WebConnect HTML5 gateway service."
@@ -45,7 +53,7 @@
 
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
         <Directory Id="CompanyFolder" Name="Cloudbase Solutions">
           <Directory Id="INSTALLDIR" Name="FreeRDP-WebConnect" />
         </Directory>
