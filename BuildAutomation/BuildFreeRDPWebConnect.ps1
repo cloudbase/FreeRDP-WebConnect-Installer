@@ -52,7 +52,7 @@ $ENV:INCLUDE+= ";$ENV:BOOST_ROOT"
 
 SetVCVars $vsVersion $Platform
 
-$basePath = "C:\OpenStack\build\FreeRDP-WebConnect"
+$basePath = "C:\Build\FreeRDP-WebConnect"
 $buildDir = "$basePath\Build"
 $outputPath = "$buildDir\bin"
 

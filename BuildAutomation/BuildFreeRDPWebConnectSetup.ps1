@@ -13,7 +13,7 @@ Install requirements first, see: Installrequirements.ps1
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 . "$scriptPath\BuildUtils.ps1"
 
-$basePath = "C:\OpenStack\build\FreeRDP-WebConnect"
+$basePath = "C:\Build\FreeRDP-WebConnect"
 
 CheckDir $basePath
 pushd .
