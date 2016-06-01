@@ -100,6 +100,12 @@ function PullInstall($path, $url)
     }
 }
 
+function CreateZip($zipPath)
+{
+    &7z.exe a -r $zipPath $args
+    if ($LastExitCode) { throw "7z.exe failed to create archive: $archive"}
+}
+
 function Expand7z($archive, $outputDir = ".")
 {
     pushd .

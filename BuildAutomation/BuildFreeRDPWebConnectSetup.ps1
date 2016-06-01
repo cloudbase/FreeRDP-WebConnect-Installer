@@ -21,6 +21,7 @@ try
 {
     cd $basePath
 
+    $ENV:PATH += ";$ENV:ProgramFiles\7-zip\"
     $ENV:PATH += ";$ENV:ProgramFiles (x86)\Git\bin\"
     # Needed for SSH
     $ENV:HOME = $ENV:USERPROFILE
@@ -65,7 +66,9 @@ try
         popd
     }
 
-    $msi_path = "$msi_project_dir\bin\${Platform}\Release\FreeRDP-WebConnect-Installer.msi"
+
+    $release_dir = "$msi_project_dir\bin\${Platform}\Release"
+    $msi_path = "$release_dir\FreeRDP-WebConnect-Installer.msi"
 
     if($SignX509Thumbprint)
     {
@@ -77,6 +80,21 @@ try
     else
     {
         Write-Warning "MSI not signed"
+    }
+
+    $zip_path = "$release_dir\FreeRDP-WebConnect-Installer.zip"
+    if (Test-Path $zip_path) {
+        del $zip_path
+    }
+
+    pushd $msm_project_dir
+    try
+    {
+        CreateZip $zip_path Binaries WebRoot
+    }
+    finally
+    {
+        popd
     }
 }
 finally
