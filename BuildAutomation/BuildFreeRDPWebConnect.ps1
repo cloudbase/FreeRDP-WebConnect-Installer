@@ -32,8 +32,8 @@ $platformToolset = "v$($vsVersion.Replace('.', ''))"
 $vsPlatformMap = @{"x86"="Win32"; "amd64"="x64"; "x86_amd64"="x64"}
 $vsPlatform = $vsPlatformMap[$Platform]
 
-$zlibBase = "zlib-1.2.8"
-$zlibMD5 = "44d667c142d7cda120332623eab69f40"
+$zlibBase = "zlib-1.2.11"
+$zlibSHA256 = "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1"
 $libpngBase = "lpng1610"
 $libpngSHA1 = "d44d11ad12c27936254c529288d6d044978f3f38"
 $pthreadsWin32Base = "pthreads-w32-2-9-1-release"
@@ -69,7 +69,7 @@ try
 
     GetCPPRestSDK $vsVersion $buildDir $outputPath $cpprestsdkVersion $vsPlatform
     CopyBoostDlls $vsVersion $outputPath @("date_time", "filesystem", "program_options", "regex", "system")
-    BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator $platformToolset $true $zlibMD5 $vsPlatform
+    BuildZLib $buildDir $outputPath $zlibBase $cmakeGenerator $platformToolset $true $zlibSHA256 $vsPlatform
     BuildLibPNG $buildDir $outputPath $libpngBase $cmakeGenerator $platformToolset $true $libpngSHA1 $vsPlatform
     BuildOpenSSL $buildDir $outputPath $opensslVersion $Platform $cmakeGenerator $platformToolset $true $true $opensslSha1
     BuildFreeRDP $buildDir $outputPath $scriptPath $cmakeGenerator $platformToolset $true $true $false $true $vsPlatform $freerdpBranch

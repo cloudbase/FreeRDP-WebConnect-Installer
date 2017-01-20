@@ -9,7 +9,7 @@ function CopyBoostDlls($vsVersion, $outputPath, $boostLibs)
     }
 }
 
-function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $platformToolset, $setBuildEnvVars=$true, $hashMD5=$null, $platform="Win32")
+function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $platformToolset, $setBuildEnvVars=$true, $hashSHA256=$null, $platform="Win32")
 {
     $zlibUrl = "http://zlib.net/$zlibBase.tar.gz"
     $zlibPath = "$ENV:TEMP\$zlibBase.tar.gz"
@@ -21,7 +21,7 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $platform
 
         ExecRetry { (new-object System.Net.WebClient).DownloadFile($zlibUrl, $zlibPath) }
 
-        if($hashMD5) { ChechFileHash $zlibPath $hashMD5 "MD5" }
+        if($hashMD5) { ChechFileHash $zlibPath $hashSHA256 "SHA256" }
 
         Expand7z $zlibPath
         del $zlibPath
