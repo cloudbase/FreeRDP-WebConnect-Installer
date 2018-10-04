@@ -7,7 +7,7 @@
         <Control Type="CheckBox" Id="openStackEnableCheckBox" Width="200" Height="17" X="10" Y="52" Text=" Enable O&amp;penStack integration"
                  CheckBoxValue="1" ToolTip="Configures FreeRDP-WebConnect for OpenStack integration" Property="OPENSTACK_ENABLED" />
 
-        <Control Type="GroupBox" Id="openStackGroupBox" Width="272" Height="78" X="10" Y="72" Text="OpenStack credentials">
+        <Control Type="GroupBox" Id="openStackGroupBox" Width="348" Height="78" X="10" Y="72" Text="OpenStack credentials">
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
@@ -16,12 +16,12 @@
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
-        <Control Type="Edit" Id="openStackAuthUrlEdit" Width="260" Height="15" X="15" Y="98" Property="OPENSTACK_AUTH_URL">
+        <Control Type="Edit" Id="openStackAuthUrlEdit" Width="252" Height="15" X="15" Y="98" Property="OPENSTACK_AUTH_URL">
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
 
-        <Control Type="Text" Id="openStackTenantNameText" Width="80" Height="12" X="15" Y="118" Text="&amp;Tenant name:">
+        <Control Type="Text" Id="openStackTenantNameText" Width="80" Height="12" X="15" Y="118" Text="&amp;Project name:">
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
@@ -30,20 +30,38 @@
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
 
-        <Control Type="Text" Id="openStackUsernameText" Width="80" Height="12" X="105" Y="118" Text="&amp;Username:">
+        <Control Type="Text" Id="openStackUsernameText" Width="80" Height="12" X="101" Y="118" Text="&amp;Username:">
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
-        <Control Type="Edit" Id="openStackUsernameEdit" Width="80" Height="17" X="105" Y="130" Property="OPENSTACK_USERNAME">
+        <Control Type="Edit" Id="openStackUsernameEdit" Width="80" Height="15" X="101" Y="130" Property="OPENSTACK_USERNAME">
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
 
-        <Control Type="Text" Id="openStackPasswordText" Width="80" Height="12" X="195" Y="118" Text="&amp;Password:">
+        <Control Type="Text" Id="openStackPasswordText" Width="80" Height="12" X="187" Y="118" Text="&amp;Password:">
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>
-        <Control Type="Edit" Id="openStackPasswordEdit" Width="80" Height="17" X="195" Y="130" Password="yes" Property="OPENSTACK_PASSWORD">
+        <Control Type="Edit" Id="openStackPasswordEdit" Width="80" Height="15" X="187" Y="130" Password="yes" Property="OPENSTACK_PASSWORD">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="openStackProjectDomainNameText" Width="80" Height="12" X="273" Y="86" Text="Project &amp;domain name:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="openStackProjectDomainNameEdit" Width="80" Height="15" X="273" Y="98" Property="OPENSTACK_PROJECT_DOMAIN_NAME">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+
+        <Control Type="Text" Id="openStackUserDomainNamText" Width="80" Height="12" X="273" Y="118" Text="User d&amp;omain name:">
+          <Condition Action="enable">OPENSTACK_ENABLED</Condition>
+          <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
+        </Control>
+        <Control Type="Edit" Id="openStackUserDomainNameEdit" Width="80" Height="15" X="273" Y="130" Property="OPENSTACK_USER_DOMAIN_NAME">
           <Condition Action="enable">OPENSTACK_ENABLED</Condition>
           <Condition Action="disable">NOT OPENSTACK_ENABLED</Condition>
         </Control>

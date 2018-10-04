@@ -33,8 +33,15 @@ function writeWSGateConfFileAction() {
         var openstackTenantName = data[i++];
         var openstackUserName = data[i++];
         var openstackPassword = data[i++];
+        var openstackProjectDomainName = data[i++];
+        var openstackUserDomainName = data[i++];
         var hypervHostUserName = data[i++];
         var hypervHostPassword = data[i++];
+
+        var keyStoneVersion = "v2.0";
+        if (openstackProjectDomainName.length > 0 && openstackUserDomainName.length > 0) {
+            keyStoneVersion = "v3";
+        }
 
         var wsgateConfFileName = wsgateConfFolder + "wsgate.ini";
 
@@ -60,10 +67,13 @@ function writeWSGateConfFileAction() {
         };
 
         var configOpenStack = {
+            "keystoneversion": keyStoneVersion,
             "authurl": openstackAuthUrl,
             "tenantname": openstackTenantName,
             "username": openstackUserName,
-            "password": openstackPassword
+            "password": openstackPassword,
+            "projectdomainname": openstackProjectDomainName,
+            "userdomainname": openstackUserDomainName
         };
 
         var configHyperV = {

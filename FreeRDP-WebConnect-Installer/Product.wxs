@@ -40,10 +40,12 @@
     <Property Id="HTTPS_LISTENING_ADDRESS" Value="0.0.0.0" />
     <Property Id="HTTPS_PORT" Value="4430" />
 
-    <Property Id="OPENSTACK_AUTH_URL" Value="http://keystone:5000/v2.0/" />
+    <Property Id="OPENSTACK_AUTH_URL" Value="http://keystone:5000/v3/" />
     <Property Id="OPENSTACK_TENANT_NAME" Value="admin" />
     <Property Id="OPENSTACK_USERNAME" Value="admin" />
     <Property Id="OPENSTACK_PASSWORD" Hidden="yes" />
+    <Property Id="OPENSTACK_PROJECT_DOMAIN_NAME" Value="Default" />
+    <Property Id="OPENSTACK_USER_DOMAIN_NAME" Value="Default" />
 
     <Property Id="HYPERV_HOST_USERNAME" Value="Administrator" />
     <Property Id="HYPERV_HOST_PASSWORD" Hidden="yes" />
@@ -73,6 +75,8 @@
         <ConfigurationData Name="OPENSTACK_TENANT_NAME_Property" Value="[OPENSTACK_TENANT_NAME]" />
         <ConfigurationData Name="OPENSTACK_USERNAME_Property" Value="[OPENSTACK_USERNAME]" />
         <ConfigurationData Name="OPENSTACK_PASSWORD_Property" Value="[OPENSTACK_PASSWORD]" />
+        <ConfigurationData Name="OPENSTACK_PROJECT_DOMAIN_NAME_Property" Value="[OPENSTACK_PROJECT_DOMAIN_NAME]" />
+        <ConfigurationData Name="OPENSTACK_USER_DOMAIN_NAME_Property" Value="[OPENSTACK_USER_DOMAIN_NAME]" />
         <ConfigurationData Name="HYPERV_HOST_USERNAME_Property" Value="[HYPERV_HOST_USERNAME]" />
         <ConfigurationData Name="HYPERV_HOST_PASSWORD_Property" Value="[HYPERV_HOST_PASSWORD]" />
         <ConfigurationData Name="ENABLE_FIREWALL_RULES_Property" Value="[ENABLE_FIREWALL_RULES]" />
@@ -81,10 +85,10 @@
 
     <DirectoryRef Id="TARGETDIR">
       <?if $(var.Platform)="x86" ?>
-        <Merge Id="VC120Redist" SourceFile="Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0" />
+      <Merge Id="VC120Redist" SourceFile="Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0" />
       <?endif?>
       <?if $(var.Platform)="x64" ?>
-        <Merge Id="VC120Redist" SourceFile="Microsoft_VC120_CRT_x64.msm" DiskId="1" Language="0" />
+      <Merge Id="VC120Redist" SourceFile="Microsoft_VC120_CRT_x64.msm" DiskId="1" Language="0" />
       <?endif?>
     </DirectoryRef>
   </Fragment>

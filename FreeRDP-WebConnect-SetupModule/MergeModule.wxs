@@ -77,6 +77,16 @@
     <Substitution Table="CustomAction" Row="setOPENSTACK_PASSWORD" Column="Target" Value="[=OPENSTACK_PASSWORD_Property]" />
     <CustomAction Property="OPENSTACK_PASSWORD" Value="[OPENSTACK_PASSWORD]" Id="setOPENSTACK_PASSWORD" Execute="immediate" />
 
+    <Property Id="OPENSTACK_PROJECT_DOMAIN_NAME" />
+    <Configuration Name="OPENSTACK_PROJECT_DOMAIN_NAME_Property" Format="Text" NonNullable="yes" DefaultValue="Default" />
+    <Substitution Table="CustomAction" Row="setOPENSTACK_PROJECT_DOMAIN_NAME" Column="Target" Value="[=OPENSTACK_PROJECT_DOMAIN_NAME_Property]" />
+    <CustomAction Property="OPENSTACK_PROJECT_DOMAIN_NAME" Value="[OPENSTACK_PROJECT_DOMAIN_NAME]" Id="setOPENSTACK_PROJECT_DOMAIN_NAME" Execute="immediate" />
+
+    <Property Id="OPENSTACK_USER_DOMAIN_NAME" />
+    <Configuration Name="OPENSTACK_USER_DOMAIN_NAME_Property" Format="Text" NonNullable="yes" DefaultValue="Default" />
+    <Substitution Table="CustomAction" Row="setOPENSTACK_USER_DOMAIN_NAME" Column="Target" Value="[=OPENSTACK_USER_DOMAIN_NAME_Property]" />
+    <CustomAction Property="OPENSTACK_USER_DOMAIN_NAME" Value="[OPENSTACK_USER_DOMAIN_NAME]" Id="setOPENSTACK_USER_DOMAIN_NAME" Execute="immediate" />
+
     <Property Id="HYPERV_HOST_USERNAME" />
     <Configuration Name="HYPERV_HOST_USERNAME_Property" Format="Text" NonNullable="yes" DefaultValue="Administrator" />
     <Substitution Table="CustomAction" Row="setHYPERV_HOST_USERNAME" Column="Target" Value="[=HYPERV_HOST_USERNAME_Property]" />
@@ -104,6 +114,9 @@
       <Custom Action="setOPENSTACK_TENANT_NAME" After="LaunchConditions" />
       <Custom Action="setOPENSTACK_USERNAME" After="LaunchConditions" />
       <Custom Action="setOPENSTACK_PASSWORD" After="LaunchConditions" />
+      <Custom Action="setOPENSTACK_PROJECT_DOMAIN_NAME" After="LaunchConditions" />
+      <Custom Action="setOPENSTACK_USER_DOMAIN_NAME" After="LaunchConditions" />
+
       <Custom Action="setHYPERV_HOST_USERNAME" After="LaunchConditions" />
       <Custom Action="setHYPERV_HOST_PASSWORD" After="LaunchConditions" />
       <Custom Action="setENABLE_FIREWALL_RULES" After="LaunchConditions" />
