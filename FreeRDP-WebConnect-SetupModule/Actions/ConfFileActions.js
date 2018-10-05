@@ -69,12 +69,17 @@ function writeWSGateConfFileAction() {
         var configOpenStack = {
             "keystoneversion": keyStoneVersion,
             "authurl": openstackAuthUrl,
-            "tenantname": openstackTenantName,
             "username": openstackUserName,
-            "password": openstackPassword,
-            "projectdomainname": openstackProjectDomainName,
-            "userdomainname": openstackUserDomainName
+            "password": openstackPassword
         };
+
+        if (keyStoneVersion == "v3") {
+            configOpenStack["projectname"] = openstackTenantName;
+            configOpenStack["projectdomainname"] = openstackProjectDomainName;
+            configOpenStack["userdomainname"] = openstackUserDomainName;
+        } else {
+            configOpenStack["tenantname"] = openstackTenantName;
+        }
 
         var configHyperV = {
             "hostusername": hypervHostUserName,
