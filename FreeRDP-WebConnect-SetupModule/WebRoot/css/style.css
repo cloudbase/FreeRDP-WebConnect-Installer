@@ -34,7 +34,7 @@ html { font-size: 100%; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 10
 html, button, input, select, textarea { font-family: sans-serif; color: #222; }
 
 body { margin: 0; font-size: 1em; line-height: 1.4;
-	background-image:url(http://www.cloudbase.it/wp-content/uploads/2012/10/background33.jpg);
+    background-image:url('../images/background.jpg');
 }
 
 /*
@@ -224,7 +224,7 @@ html {
     height: 100%;
 }
 body {
-    background-image:url(http://www.cloudbase.it/wp-content/uploads/2012/10/background33.jpg);
+    background-image:url('../images/background.jpg');
     font-family: Verdana,Arial,Helvetica,sans-serif;
     font-size: 10pt;
     width: 100%;
@@ -411,7 +411,10 @@ label.big {
   cursor:hand;
 }
 
-
+.extracommandshold
+{
+  background-color: #d7d7d7;
+}
 
 /* ==|== media queries ======================================================
    EXAMPLE Media Query for Responsive Design.
@@ -469,4 +472,32 @@ label.big {
   @page { margin: 0.5cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
+}
+
+
+/* Pop up message box
+ */
+
+.popupwrapper {
+  background-color: transparent;
+  width: 50%;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+}
+
+.popupmessage {
+  border-style: solid;
+  border-radius: 15px;
+  border-width: 0;
+  padding: 15px;
+  width: auto;
+  height: auto;
+  z-index: 1234;
+  position: relative;
+  font-family: sans-serif;
+  text-align: center;
 }

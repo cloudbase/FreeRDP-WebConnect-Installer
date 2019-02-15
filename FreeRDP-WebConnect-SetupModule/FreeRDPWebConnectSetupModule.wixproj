@@ -117,26 +117,24 @@
     <Content Include="Binaries\wsgate.exe" />
     <Content Include="Binaries\zlib.dll" />
     <Content Include="UtilsActions.dll" />
-    <Content Include="WebRoot\css\style-debug.css" />
+    <Content Include="WebRoot\css\quicksand.css" />
     <Content Include="WebRoot\css\style.css" />
-    <Content Include="WebRoot\css\vkb-debug.css" />
     <Content Include="WebRoot\css\vkb.css" />
     <Content Include="WebRoot\c_default.png" />
     <Content Include="WebRoot\c_none.png" />
     <Content Include="WebRoot\favicon.ico" />
-    <Content Include="WebRoot\FreeRDP_Logo.png" />
+    <Content Include="WebRoot\fonts\quicksand\v8\6xKtdSZaM9iE8KbpRA_hJVQNcOM.woff2" />
+    <Content Include="WebRoot\fonts\quicksand\v8\6xKtdSZaM9iE8KbpRA_hK1QN.woff2" />
+    <Content Include="WebRoot\images\background.jpg" />
+    <Content Include="WebRoot\images\CBSL_web_logo3.png" />
+    <Content Include="WebRoot\images\loading.gif" />
     <Content Include="WebRoot\index.html" />
-    <Content Include="WebRoot\js\modernizr-debug.js" />
     <Content Include="WebRoot\js\modernizr.js" />
-    <Content Include="WebRoot\js\mootools-debug.js" />
     <Content Include="WebRoot\js\mootools.js" />
-    <Content Include="WebRoot\js\simpletabs-debug.js" />
     <Content Include="WebRoot\js\simpletabs.js" />
-    <Content Include="WebRoot\js\vkb-debug.js" />
     <Content Include="WebRoot\js\vkb.js" />
     <Content Include="WebRoot\js\vkbl-de_DE.json" />
     <Content Include="WebRoot\js\vkbl-en_US.json" />
-    <Content Include="WebRoot\js\wsgate-debug.js" />
     <Content Include="WebRoot\js\wsgate.js" />
   </ItemGroup>
   <ItemGroup>
