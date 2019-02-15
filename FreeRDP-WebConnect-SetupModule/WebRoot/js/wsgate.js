@@ -174,38 +174,131 @@ wsgate.RDP = new Class( {
         if (vkbd) {
             vkbd.addEvent('vkpress', this.onKv.bind(this));
         }
+        //browser identiying variables
+        this.msie = window.navigator.userAgent.indexOf('MSIE ');
+        this.trident = window.navigator.userAgent.indexOf('Trident/');
         this.parent(url);
+        //add the toggle function to the keyboard language button
+        $('keyboardlanguage').addEvent('click', this.ToggleLanguageButton.bind(this));
     },
     Disconnect: function() {
         this._reset();
     },
     SendKey: function(comb) {
-	//Add here all the keys from the canvas
-        switch (comb){
-	    case 1:
-                code = 0x2a; //ctrl+alt+delete 
-		break;
-	    case 2:
-                code = 0x2b; //shift+alt
-		break;
-	    case 3:
-                code = 0x2c; //ctrl + C
-		break;
-	    case 4:
-                code = 0x2e; //ctrl + V 
-		break;
-	};
+        //code 0 : ctrl+alt+delete
+        //code 1 : alt+tab
+        //code 2 : alt+tab release
+
         if (this.sock.readyState == this.sock.OPEN) {
-            this.log.debug('send  special combination', code);
+            this.log.debug('send  special combination', comb);
             buf = new ArrayBuffer(12);
             a = new Uint32Array(buf);
             a[0] = 3; // WSOP_CS_SPECIALCOMB
-	    a[1] = code;
+            a[1] = comb;
             this.sock.send(buf);
-
-	};
+        };
+    },
+    SendCredentials: function() {
+        var infoJSONstring = JSON.stringify(settingsGetJSON());
+        var len = infoJSONstring.length;
+        var buf = new ArrayBuffer((len + 1)*4); // 4 bytes for each char
+        var bufView = new Uint32Array(buf);
+        bufView[0] = 4; // WSOP_CS_CREDENTIAL_JSON
+        for(var i = 0; i<len; i++){
+            bufView[i+1] = infoJSONstring.charCodeAt(i);
+        }
+        this.sock.send(buf);
     },
     /**
+     * Multilanguage mode
+     */
+    useIME: false,
+    ToggleLanguageButton: function(){
+        if(this.useIME){
+            this.useIME = false;
+            $('keyboardlanguage').removeClass('extracommandshold');
+        }else{
+            this.useIME = true;
+            $('keyboardlanguage').addClass('extracommandshold');
+        }
+    },
+    /**
+     * Used when the special input method is on
+     */
+    IMEon: false,
+    /**
+     * The textarea element object
+     */
+    textAreaInput: null,
+    /**
+     * This function adds a textarea element on top of the canvas for the purpose of keyboard input
+     */
+    SetupCanvas: function(canvas){
+        if(this.textAreaInput)return;
+
+        var pos = canvas.getPosition();
+        var size= canvas.getSize();
+
+        this.textAreaInput = document.createElement('textarea');
+
+        this.textAreaInput.set('id', 'textareainput');
+
+        this.textAreaInput.setStyle('width', size.x);
+        this.textAreaInput.setStyle('height', size.y);
+        this.textAreaInput.setStyle('position', 'absolute');
+        this.textAreaInput.setStyle('opacity', 0);
+        this.textAreaInput.setStyle('resize', 'none');
+        this.textAreaInput.setStyle('cursor', 'default');
+        canvas.setStyle('cursor', 'none');
+
+        this.textAreaInput.setPosition(pos);
+
+        this.textAreaInput.addEvent('keydown', this.KeyDownEvent.bind(this));
+        this.textAreaInput.addEvent('keypress', this.KeyPressEvent.bind(this));
+        this.textAreaInput.addEvent('keyup', this.KeyUpEvent.bind(this));
+        this.textAreaInput.addEvent('copy', function(evt){
+            if (evt.preventDefault) evt.preventDefault();
+            if (evt.stopPropagation) evt.stopPropagation();
+        });
+
+        document.body.appendChild(this.textAreaInput);
+
+        //start the IME helper refresh
+        refreshIMEhelper();
+
+        //make sure the textarea is always on focus
+        this.textAreaInput.focus();
+        this.textAreaInput.addEvent('blur', function(){
+            setTimeout(function(){
+                if($('textareainput')){
+                    $('textareainput').focus();
+                }
+            },20);
+        });
+    },
+    /**
+     * Returns true when a non character is pressed
+     */
+    FunctionalKey: function(key){
+        return (key != 32 && ((key <= 46) || (91 <= key && key <= 145)));
+    },
+    /**
+     * Takes the contents of the textarea and sends them to the server
+     */
+    DumpTextArea: function(key){
+        if(key==13||key==0)
+        if(this.IMEon){
+            var textinput = this.textAreaInput.get("value");
+            if(textinput!=""){
+                if(textinput[0]=='\n'){
+                    textinput = textinput.substring(1);
+                }
+                this.SendUnicodeString(textinput);
+                this.textAreaInput.set("value","");
+            }
+            this.IMEon=false;
+        }
+    },    /**
      * Position cursor image
      */
     cP: function() {
@@ -382,9 +475,11 @@ wsgate.RDP = new Class( {
                 // id, xhot, yhot
                 hdr = new Uint32Array(data, 4, 3);
                 if (this.cssC) {
-                    this.cursors[hdr[0]] = 'url(/cur/'+this.sid+'/'+hdr[0]+') '+hdr[1]+' '+hdr[2]+',none';
+                    this.cursors[hdr[0]] = (this.msie > 0 || this.trident > 0) ? 'url(/cur/' + this.sid + '/' + hdr[0] + '), none' : //IE is not suporting given hot spots
+                                            'url(/cur/' + this.sid + '/' + hdr[0] + ') ' + hdr[1] + ' ' + hdr[2] + ',none'; 
                 } else {
-                    this.cursors[hdr[0]] = {u: '/cur/'+this.sid+'/'+hdr[0], x: hdr[1], y: hdr[2]};
+                    this.cursors[hdr[0]] = (this.msie > 0 || this.trident > 0) ? { u: '/cur/' + this.sid + '/' + hdr[0] } :
+                                            { u: '/cur/' + this.sid + '/' + hdr[0], x: hdr[1], y: hdr[2] };
                 }
                 break;
             case 9:
@@ -397,7 +492,8 @@ wsgate.RDP = new Class( {
                 // id
                 // this.log.debug('PS:', this.cursors[new Uint32Array(data, 4, 1)[0]]);
                 if (this.cssC) {
-                    this.canvas.setStyle('cursor', this.cursors[new Uint32Array(data, 4, 1)[0]]);
+                    if(this.textAreaInput)
+                        this.textAreaInput.setStyle('cursor', this.cursors[new Uint32Array(data, 4, 1)[0]]);
                 } else {
                     var cobj = this.cursors[new Uint32Array(data, 4, 1)[0]];
                     this.chx = cobj.x;
@@ -408,7 +504,8 @@ wsgate.RDP = new Class( {
             case 11:
                 // PTR_SETNULL
                 if (this.cssC) {
-                    this.canvas.setStyle('cursor', 'none');
+                    if(this.textAreaInput)
+                        this.textAreaInput.setStyle('cursor', 'none');
                 } else {
                     this.cI.src = '/c_none.png';
                 }
@@ -416,7 +513,8 @@ wsgate.RDP = new Class( {
             case 12:
                 // PTR_SETDEFAULT
                 if (this.cssC) {
-                    this.canvas.setStyle('cursor', 'default');
+                    if(this.textAreaInput)
+                        this.textAreaInput.setStyle('cursor', 'default');
                 } else {
                     this.chx = 10;
                     this.chy = 10;
@@ -555,8 +653,8 @@ wsgate.RDP = new Class( {
      */
     _reset: function() {
         this.log.setWS(null);
+        this.fireEvent('disconnected');
         if (this.sock.readyState == this.sock.OPEN) {
-            this.fireEvent('disconnected');
             this.sock.close();
         }
         this.clx = 0;
@@ -565,6 +663,12 @@ wsgate.RDP = new Class( {
         this.clh = 0;
         this.canvas.removeEvents();
         document.removeEvents();
+        try{
+            this.textAreaInput.remove();
+        }
+        catch(err){
+        }
+        this.textAreaInput = null;
         while (this.ccnt > 0) {
             this.cctx.restore();
             this.ccnt -= 1;
@@ -671,8 +775,8 @@ wsgate.RDP = new Class( {
     onMm: function(evt) {
         var buf, a, x, y;
         evt.preventDefault();
-        x = evt.event.layerX;
-        y = evt.event.layerY;
+        x = (this.msie > 0 || this.trident > 0) ? evt.event.layerX - evt.event.currentTarget.offsetLeft : evt.event.layerX;
+        y = (this.msie > 0 || this.trident > 0) ? evt.event.layerY - evt.event.currentTarget.offsetTop : evt.event.layerY;
         if (!this.cssC) {
             this.mX = x;
             this.mY = y;
@@ -695,13 +799,14 @@ wsgate.RDP = new Class( {
     onMd: function(evt) {
         var buf, a, x, y, which;
         if (this.Tcool) {
-            evt.preventDefault();
+            if(evt.preventDefault) evt.preventDefault();
+            if(evt.stopPropagation) evt.stopPropagation();
             if (evt.rightClick && evt.control && evt.alt) {
                 this.fireEvent('touch3');
                 return;
             }
-            x = evt.event.layerX;
-            y = evt.event.layerY;
+            x = (this.msie > 0 || this.trident > 0) ? evt.event.layerX - evt.event.currentTarget.offsetLeft : evt.event.layerX;
+            y = (this.msie > 0 || this.trident > 0) ? evt.event.layerY - evt.event.currentTarget.offsetTop : evt.event.layerY;
             which = this._mB(evt);
             this.log.debug('mD b: ', which, ' x: ', x, ' y: ', y);
             if (this.sock.readyState == this.sock.OPEN) {
@@ -712,6 +817,7 @@ wsgate.RDP = new Class( {
                 a[2] = x;
                 a[3] = y;
                 this.sock.send(buf);
+                this.mouseDownStatus[which] = true;
             }
         }
     },
@@ -722,8 +828,8 @@ wsgate.RDP = new Class( {
         var buf, a, x, y, which;
         if (this.Tcool) {
             evt.preventDefault();
-            x = x || evt.event.layerX;
-            y = y || evt.event.layerY;
+            x = (this.msie > 0 || this.trident > 0) ? evt.event.layerX - evt.event.currentTarget.offsetLeft : evt.event.layerX;
+            y = (this.msie > 0 || this.trident > 0) ? evt.event.layerY - evt.event.currentTarget.offsetTop : evt.event.layerY;
             which = this._mB(evt);
             this.log.debug('mU b: ', which, ' x: ', x, ' y: ', y);
             if (this.aMF) {
@@ -737,6 +843,7 @@ wsgate.RDP = new Class( {
                 a[2] = x;
                 a[3] = y;
                 this.sock.send(buf);
+                this.mouseDownStatus[which] = false;
             }
         }
     },
@@ -746,8 +853,8 @@ wsgate.RDP = new Class( {
     onMw: function(evt) {
         var buf, a, x, y;
         evt.preventDefault();
-        x = evt.event.layerX;
-        y = evt.event.layerY;
+        x = (this.msie > 0 || this.trident > 0) ? evt.event.layerX - evt.event.currentTarget.offsetLeft : evt.event.layerX;
+        y = (this.msie > 0 || this.trident > 0) ? evt.event.layerY - evt.event.currentTarget.offsetTop : evt.event.layerY;
         // this.log.debug('mW d: ', evt.wheel, ' x: ', x, ' y: ', y);
         if (this.sock.readyState == this.sock.OPEN) {
             buf = new ArrayBuffer(16);
@@ -759,7 +866,39 @@ wsgate.RDP = new Class( {
             this.sock.send(buf);
         }
     },
-
+    /**
+     * Field used to keep the states of the sent mouse events
+     */
+    mouseDownStatus: {},
+    /**
+     * Event handler for mouse leaving the canvas area
+     * used to send mouse release for any unsent mouse releases
+     */
+    onMouseLeave: function(evt){
+       for(var button in this.mouseDownStatus){
+           if(this.mouseDownStatus[button]){
+               var x = (this.msie > 0 || this.trident > 0) ? evt.event.layerX - evt.event.currentTarget.offsetLeft : evt.event.layerX;
+               var y = (this.msie > 0 || this.trident > 0) ? evt.event.layerY - evt.event.currentTarget.offsetTop : evt.event.layerY;
+               var maxX = $('textareainput').getStyle('width').toInt();
+               var maxY = $('textareainput').getStyle('height').toInt();
+               if (x < 0) x = 0;
+               if (y < 0) y = 0;
+               if (x > maxX) x = maxX;
+               if (y > maxY) y = maxY;
+               var which = button;
+               if (this.sock.readyState == this.sock.OPEN) {
+                   buf = new ArrayBuffer(16);
+                   a = new Uint32Array(buf);
+                   a[0] = 0; // WSOP_CS_MOUSE
+                   a[1] = which;
+                   a[2] = x;
+                   a[3] = y;
+                   this.sock.send(buf);
+                   this.mouseDownStatus[which] = false;
+               }
+           }
+       }
+    },
     /**
      * Event handler for sending array of keys to be pressed
      */
@@ -773,13 +912,82 @@ wsgate.RDP = new Class( {
             }
         }
     },
-
+    /**
+     * Sends a unicode char or string
+     */
+    SendUnicodeString: function(str){
+        var len = str.length;
+        buf = new ArrayBuffer(4 * len + 4);
+        a = new Uint32Array(buf);
+        a[0] = 5; // WSOP_CS_UNICODE
+        for(var i = 0; i<len; i++){
+            a[i+1] = str.charCodeAt(i); 
+        }
+        this.sock.send(buf);
+    },
+    /**
+     * Sends a scancode key event
+     * down = 1
+     * up = 0
+     */
+    SendKeyUpDown: function(key, upDown){
+        if (this.sock.readyState == this.sock.OPEN) {
+            buf = new ArrayBuffer(12);
+            a = new Uint32Array(buf);
+            a[0] = 1; // WSOP_CS_KUPDOWN
+            a[1] = upDown;
+            a[2] = key;
+            this.sock.send(buf);
+        }
+    },
+    KeyDownEvent: function(evt){
+        if(!this.useIME){
+            this.SendKeyUpDown(evt.code, 1);
+        }else{
+            if(evt.code==229||evt.code==0)this.IMEon=true;
+            //send key presses only when IME is off
+            if(!this.IMEon){
+                if(this.FunctionalKey(evt.code)){
+                    if(evt.preventDefault) evt.preventDefault();
+                    if(evt.stopPropagation) evt.stopPropagation();
+                    this.SendKeyUpDown(evt.code, 1);
+                }
+            }
+        }
+    },
+    KeyUpEvent: function(evt){
+        if(!this.useIME){
+            this.SendKeyUpDown(evt.code, 0);
+            this.textAreaInput.set("value","");
+        }else{
+            if(!this.IMEon)
+            if(this.FunctionalKey(evt.code)){
+                if(evt.preventDefault) evt.preventDefault();
+                if(evt.stopPropagation) evt.stopPropagation();
+                this.SendKeyUpDown(evt.code, 0);
+            }
+            this.DumpTextArea(evt.code);
+        }
+    },
+    /**
+     * Sends unicode to the server
+     */
+    KeyPressEvent: function(evt){
+        if(this.useIME)
+        if(!this.IMEon){
+            this.SendUnicodeString(String.fromCharCode(evt.code));
+            $('textareainput').set("value","");
+            if(evt.preventDefault) evt.preventDefault();
+            if(evt.stopPropagation) evt.stopPropagation();
+        }
+        this.DumpTextArea(evt.code);
+    },
     /**
      * Event handler for key down events
      */
     onKd: function(evt) {
         var a, buf;
-	this.log.debug('kD code: ', evt.code, ' ', evt);
+        this.log.debug('kD code: ', evt.code, ' ', evt);
         evt.preventDefault();
         // this.log.debug('kD code: ', evt.code, ' ', evt);
         if (this.sock.readyState == this.sock.OPEN) {
@@ -805,7 +1013,8 @@ wsgate.RDP = new Class( {
             a[1] = 0; // up
             a[2] = evt.code;
             this.sock.send(buf);
-        }    },
+        }
+    },
     /**
      * Event handler for virtual keyboard
      */
@@ -833,28 +1042,19 @@ wsgate.RDP = new Class( {
     },
     /**
      * Event handler for key pressed events
+     Obsv: not used anymore. Will be removed after checking it's dependants. 
      */
     onKp: function(evt) {
-	return;
-/*        var a, buf;
-        evt.preventDefault();
-        if (this.modkeys.contains(evt.code)) {
-            return;
-        }
-        if (this.sock.readyState == this.sock.OPEN) {
-            // this.log.debug('kP code: ', evt.code);
-            buf = new ArrayBuffer(12);
-            a = new Uint32Array(buf);
-            a[0] = 2; // WSOP_CS_KPRESS
-            a[1] = (evt.shift ? 1 : 0)|(evt.control ? 2 : 0)|(evt.alt ? 4 : 0)|(evt.meta ? 8 : 0);
-            a[2] = evt.code;
-            this.sock.send(buf);
-        }*/
+	    return;
     },
     /**
      * Event handler for WebSocket RX events
      */
     onWSmsg: function(evt) {
+        //hide the loading image when the actual streaming starts
+        if ($('dvLoading').getStyle("visibility") !== "hidden") {
+            $('dvLoading').setStyles({ 'visibility': 'hidden' });
+        }
         switch (typeof(evt.data)) {
             // We use text messages for alerts and debugging ...
             case 'string':
@@ -864,8 +1064,13 @@ wsgate.RDP = new Class( {
                             this._reset();
                             break;
                     case "E:":
-                            this.log.err(evt.data.substring(2));
-                            this.fireEvent('alert', evt.data.substring(2));
+                            var msg = evt.data.substring(2);
+                            if(msg.substring(0, 2)=='E:'){
+                                embedded = true;
+                                msg = msg.substring(2);
+                            }
+                            this.log.err(msg);
+                            this.fireEvent('alert', msg);
                             this._reset();
                             break;
                     case 'I:':
@@ -879,6 +1084,27 @@ wsgate.RDP = new Class( {
                             break;
                     case 'S:':
                             this.sid = evt.data.substring(2);
+                            break;
+                    case 'R:':
+                            //resolution changed
+                            resolution=evt.data.substr(2).split('x');
+                            $('screen').width=resolution[0];
+                            $('screen').height=resolution[1];
+                            this.bstore.width=resolution[0];
+                            this.bstore.height=resolution[1];
+                            $('textareainput').setStyle('width', resolution[0]+'px');
+                            $('textareainput').setStyle('height', resolution[1]+'px');
+                            break;
+                    case 'C:':
+                            var msg = evt.data.substr(2);
+                            if(msg.substr(0, 2) == 'E:'){
+                                msg = msg.substr(2);
+                                embedded = true;
+                            }
+                            if(msg == "RDP session connection started."){
+                                //the connection worked so we can set the cookies
+                                settingsSet();
+                            }
                             break;
                 }
                 break;
@@ -895,18 +1121,21 @@ wsgate.RDP = new Class( {
     onWSopen: function(evt) {
         this.open = true;
         this.log.setWS(this.sock);
+        //add the textarea on top of the canvas
+        this.SetupCanvas($('screen'));
         // Add listeners for the various input events
-        this.canvas.addEvent('mousemove', this.onMm.bind(this));
-        this.canvas.addEvent('mousedown', this.onMd.bind(this));
-        this.canvas.addEvent('mouseup', this.onMu.bind(this));
-        this.canvas.addEvent('mousewheel', this.onMw.bind(this));
+        this.textAreaInput.addEvent('mousemove', this.onMm.bind(this));
+        this.textAreaInput.addEvent('mousedown', this.onMd.bind(this));
+        this.textAreaInput.addEvent('mouseup', this.onMu.bind(this));
+        this.textAreaInput.addEvent('mousewheel', this.onMw.bind(this));
+        this.textAreaInput.addEvent('mouseleave', this.onMouseLeave.bind(this));
         // Disable the browser's context menu
-        this.canvas.addEvent('contextmenu', function(e) {e.stop();});
+        this.textAreaInput.addEvent('contextmenu', function(e) {e.stop();});
         // For touch devices
         if (this.uT) {
-            this.canvas.addEvent('touchstart', this.onTs.bind(this));
-            this.canvas.addEvent('touchend', this.onTe.bind(this));
-            this.canvas.addEvent('touchmove', this.onTm.bind(this));
+            this.textAreaInput.addEvent('touchstart', this.onTs.bind(this));
+            this.textAreaInput.addEvent('touchend', this.onTe.bind(this));
+            this.textAreaInput.addEvent('touchmove', this.onTm.bind(this));
         }
         if (!this.cssC) {
             // Same events on pointer image
@@ -921,12 +1150,8 @@ wsgate.RDP = new Class( {
                 this.cI.addEvent('touchmove', this.onTm.bind(this));
             }
         }
-        // The keyboard events need to be attached to the
-        // document, because otherwise we seem to loose them.
-        document.addEvent('keydown', this.onKd.bind(this));
-        document.addEvent('keyup', this.onKu.bind(this));
-        document.addEvent('keypress', this.onKp.bind(this));
         this.fireEvent('connected');
+        this.SendCredentials();
     },
     /**
      * Event handler for WebSocket disconnect events
@@ -942,7 +1167,6 @@ wsgate.RDP = new Class( {
         }*/
         //this.open = false;
         this._reset();
-        this.fireEvent('disconnected');
     },
     /**
      * Event handler for WebSocket error events
@@ -1395,4 +1619,16 @@ wsgate.dRLE16_RGBA = function(inA, inLength, width, outA) {
         }
     }
 }
-
+/**
+ * Continuos refresh for the IMEhelper
+ */
+function refreshIMEhelper(){
+    setTimeout(this.refreshIMEhelper,20);
+    //IME helper div
+    if(rdp.IMEon){
+        $('IMEhelper').setStyle('visibility','visible');
+        $('IMEhelper').set('html',$('textareainput').get('value'));
+    }else{
+        $('IMEhelper').setStyle('visibility','hidden');
+   }
+}

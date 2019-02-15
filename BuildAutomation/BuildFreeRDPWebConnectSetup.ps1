@@ -46,15 +46,6 @@ try
     copy "$buildDir\bin\wsgate.exe" $msm_binaries_dir
     copy "$buildDir\bin\openssl.exe" $msm_binaries_dir
 
-    # Keep the Cloudbase images
-    del -Force -Recurse "$webroot_dir\*" -Exclude favicon.ico,FreeRDP_Logo.png
-    $webroot_source_dir = "$buildDir\FreeRDP-WebConnect\wsgate\webroot"
-    copy "$webroot_source_dir\index.html" $webroot_dir
-    copy "$webroot_source_dir\*.png" -Exclude FreeRDP_Logo.png $webroot_dir
-    copy -Recurse "$webroot_source_dir\js" $webroot_dir
-    copy -Recurse "$webroot_source_dir\css" $webroot_dir
-    copy -Recurse "$webroot_source_dir\images" $webroot_dir
-
     pushd $solution_dir
     try
     {
