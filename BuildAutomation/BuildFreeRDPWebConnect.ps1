@@ -7,6 +7,8 @@ Param(
 
 $ErrorActionPreference = "Stop"
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 <#
 Install requirements first, see: Installrequirements.ps1
 #>
