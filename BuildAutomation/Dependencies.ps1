@@ -209,7 +209,7 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $pl
                       $buildSharedLibs=$true, $staticRuntime=$false, $setBuildEnvVars=$true, $platform="Win32", $branch="master")
 {
     $freeRDPdir = "FreeRDP"
-    $freeRDPUrl = "https://github.com/FreeRDP/FreeRDP.git"
+    $freeRDPUrl = "https://github.com/cloudbase/FreeRDP.git"
 
     pushd .
     try
