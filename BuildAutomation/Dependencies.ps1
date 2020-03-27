@@ -33,15 +33,16 @@ function BuildZLib($buildDir, $outputPath, $zlibBase, $cmakeGenerator, $platform
         &cmake . -G $cmakeGenerator -T $platformToolset
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild zlib.sln /m /p:Configuration=Release /p:Platform=$platform
+        &msbuild zlib.sln /m /p:Configuration=$env:BuildType /p:Platform=$platform
         if ($LastExitCode) { throw "msbuild failed" }
 
-        copy "Release\*.dll" $outputPath
+        copy "$env:BuildType\*.dll" $outputPath
+        copy "$env:BuildType\*.pdb" $outputPath
 
         if($setBuildEnvVars)
         {
             $ENV:INCLUDE += ";$buildDir\$zlibBase"
-            $ENV:LIB += ";$buildDir\$zlibBase\Release"
+            $ENV:LIB += ";$buildDir\$zlibBase\$env:BuildType"
         }
     }
     finally
@@ -74,15 +75,16 @@ function BuildLibPNG($buildDir, $outputPath, $libpngBase, $cmakeGenerator, $plat
         &cmake . -G $cmakeGenerator -T $platformToolset
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild libpng.sln /m /p:Configuration=Release /p:Platform=$platform
+        &msbuild libpng.sln /m /p:Configuration=$env:BuildType /p:Platform=$platform
         if ($LastExitCode) { throw "msbuild failed" }
 
-        copy "Release\*.dll" $outputPath
+        copy "$env:BuildType\*.dll" $outputPath
+        copy "$env:BuildType\*.pdb" $outputPath
 
         if($setBuildEnvVars)
         {
             $ENV:INCLUDE += ";$buildDir\$libpngBase"
-            $ENV:LIB += ";$buildDir\$libpngBase\Release"
+            $ENV:LIB += ";$buildDir\$libpngBase\$env:BuildType"
         }
     }
     finally
@@ -122,6 +124,7 @@ function GetCPPRestSDK($vsVersion, $buildDir, $outputPath, $cpprestsdkVersion, $
         }
 
         copy "$buildDir\$cpprestsdkBase\build\native\bin\$cpprestsdkArch\v$cpprestsdkVSVersion\Release\Desktop\*.dll" $outputPath
+        copy "$buildDir\$cpprestsdkBase\build\native\bin\$cpprestsdkArch\v$cpprestsdkVSVersion\Release\Desktop\*.pdb" $outputPath
     }
     finally
     {
@@ -198,6 +201,7 @@ function BuildOpenSSL($buildDir, $outputPath, $opensslVersion, $platform, $cmake
 
         copy "$ENV:OPENSSL_ROOT_DIR\bin\*.dll" $outputPath
         copy "$ENV:OPENSSL_ROOT_DIR\bin\*.exe" $outputPath
+        ls -Recurse -Include "*.pdb" | % { cp "$_" $outputPath}
     }
     finally
     {
@@ -225,12 +229,13 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $pl
         &cmake . -G $cmakeGenerator -T $platformToolset -DMONOLITHIC_BUILD="$monolithicBuildStr" -DBUILD_SHARED_LIBS="$buildSharedLibsStr" -DMSVC_RUNTIME="$runtime" -DWITH_SSE2=ON -DBUILD_TESTING=OFF
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild FreeRDP.sln /m /p:Configuration=Release /p:Platform=$platform
+        &msbuild FreeRDP.sln /m /p:Configuration=$env:BuildType /p:Platform=$platform
         if ($LastExitCode) { throw "MSBuild failed" }
 
         copy "LICENSE" $outputPath
-        copy "Release\*.dll" $outputPath
-        copy "Release\*.exe" $outputPath
+        copy "$env:BuildType\*.dll" $outputPath
+        copy "$env:BuildType\*.exe" $outputPath
+        copy "$env:BuildType\*.pdb" $outputPath
 
         # Verify that FreeRDP runs properly so when know that all dependencies are in place
         $p = Start-Process -Wait -PassThru -NoNewWindow "$outputPath\wfreerdp.exe"
@@ -243,7 +248,7 @@ function BuildFreeRDP($buildDir, $outputPath, $patchesPath, $cmakeGenerator, $pl
         {
             $ENV:INCLUDE += ";$buildDir\$freeRDPdir\include"
             $ENV:INCLUDE += ";$buildDir\$freeRDPdir\winpr\include"
-            $ENV:LIB += ";$buildDir\$freeRDPdir\Release"
+            $ENV:LIB += ";$buildDir\$freeRDPdir\$env:BuildType"
         }
     }
     finally
@@ -278,6 +283,7 @@ function BuildPthreadsW32($buildDir, $outputPath, $pthreadsWin32Base, $hashMD5=$
         if ($LastExitCode) { throw "nmake failed" }
 
         copy "pthreadVC2.dll" "$outputPath"
+        copy "pthreadVC2.pdb" "$outputPath"
 
         if($setBuildEnvVars)
         {
@@ -307,7 +313,7 @@ function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $platformToolset, $pt
         &cmake . -G $cmakeGenerator -T $platformToolset -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib"
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild ehs.sln /m /p:Configuration=Release /p:Platform=$platform
+        &msbuild ehs.sln /m /p:Configuration=$env:BuildType /p:Platform=$platform
         if ($LastExitCode) { throw "MSBuild failed" }
 
         if($setBuildEnvVars)
@@ -315,7 +321,7 @@ function BuildEHS($buildDir, $outputPath, $cmakeGenerator, $platformToolset, $pt
             $ehsRootDir = "$buildDir\$ehsDir"
             $ENV:EHS_ROOT_DIR = $ehsRootDir
             $ENV:INCLUDE += ";$ehsRootDir"
-            $ENV:LIB += ";$ehsRootDir\Release"
+            $ENV:LIB += ";$ehsRootDir\$env:BuildType"
         }
     }
     finally
@@ -337,13 +343,16 @@ function BuildFreeRDPWebConnect($buildDir, $outputPath, $cmakeGenerator, $platfo
         ExecRetry { GitClonePull $freeRDPWebConnectDir $freeRDPWebConnectUrl }
         cd "$freeRDPWebConnectDir\wsgate"
 
-        &cmake . -G $cmakeGenerator -T $platformToolset -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib" -DEHS_ROOT_DIR="$ehsRootDir"
+        &cmake . -G $cmakeGenerator -T $platformToolset `
+            -DTHREADS_PTHREADS_WIN32_LIBRARY="$pthreadsW32Lib" `
+            -DEHS_ROOT_DIR="$ehsRootDir"
         if ($LastExitCode) { throw "cmake failed" }
 
-        &msbuild wsgate.sln /m /p:Configuration=Release /p:Platform=$platform
+        &msbuild wsgate.sln /m /p:Configuration=$env:BuildType /p:Platform=$platform
         if ($LastExitCode) { throw "MSBuild failed" }
 
-        copy "Release\wsgate.exe" $outputPath
+        copy "$env:BuildType\wsgate.exe" $outputPath
+        copy "$env:BuildType\wsgate.pdb" $outputPath
 
         # Verify that wsgate runs properly so when know that all dependencies are in place
         $p = Start-Process -Wait -PassThru -NoNewWindow "$outputPath\wsgate.exe" -ArgumentList "-V"

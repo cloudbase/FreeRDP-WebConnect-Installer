@@ -2,7 +2,8 @@ Param(
   [ValidateSet("x86", "amd64", "x86_amd64")]
   [string]$Platform = "x86_amd64",
   [ValidateSet(12, 14)]
-  [UInt16]$VSVersionNumber = 12
+  [UInt16]$VSVersionNumber = 12,
+  [string]$BuildType="RelWithDebInfo"
 )
 
 $ErrorActionPreference = "Stop"
@@ -56,6 +57,7 @@ SetVCVars $vsVersion $Platform
 $basePath = "C:\Build\FreeRDP-WebConnect"
 $buildDir = "$basePath\Build"
 $outputPath = "$buildDir\bin"
+$outputSymPath = "$outputPath\pdb"
 
 $ENV:OPENSSL_ROOT_DIR="$outputPath\OpenSSL"
 
@@ -65,9 +67,12 @@ pushd .
 try
 {
     CheckRemoveDir $buildDir
-    mkdir $buildDir
+    mkdir -Force $buildDir
     cd $buildDir
-    mkdir $outputPath
+    mkdir -Force $outputPath
+    mkdir -Force $outputSymPath
+
+    $env:BuildType = $BuildType
 
     GetCPPRestSDK $vsVersion $buildDir $outputPath $cpprestsdkVersion $vsPlatform
     CopyBoostDlls $vsVersion $outputPath @("date_time", "filesystem", "program_options", "regex", "system")
@@ -78,6 +83,11 @@ try
     BuildPthreadsW32 $buildDir $outputPath $pthreadsWin32Base $pthreadsWin32MD5
     BuildEHS $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $true $vsPlatform
     BuildFreeRDPWebConnect $buildDir $outputPath $cmakeGenerator $platformToolset $ENV:THREADS_PTHREADS_WIN32_LIBRARY $ENV:EHS_ROOT_DIR $vsPlatform
+
+    # To keep things simple, we're aggregating pdb files in $outputPath,
+    # moving them to a separate folder afterwards.
+    mv $outputPath\*.pdb $outputSymPath
+
 }
 finally
 {
