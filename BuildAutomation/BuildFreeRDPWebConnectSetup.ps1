@@ -41,10 +41,14 @@ try
 
     $buildDir = "$basePath\Build"
 
-    del -Force -Recurse "$msm_binaries_dir\*"
+    CheckRemoveDir "$msm_binaries_dir"
+    mkdir "$msm_binaries_dir"
+
+    cp -recurse "$buildDir\bin\pdb" $msm_binaries_dir
     copy "$buildDir\bin\*.dll" $msm_binaries_dir
     copy "$buildDir\bin\wsgate.exe" $msm_binaries_dir
     copy "$buildDir\bin\openssl.exe" $msm_binaries_dir
+
 
     pushd $solution_dir
     try
