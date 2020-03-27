@@ -346,7 +346,7 @@ function DownloadInstall($url, $type, $arguments="")
 function ChocolateyInstall($package)
 {
     ExecRetry {
-        &cinst $package
+        &cinst -y $package
         if($lastexitcode)
         {
             throw "cinst failed with exit code: $lastexitcode"

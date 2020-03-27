@@ -20,10 +20,14 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 
 # Make sure ActivePerl comes before MSYS Perl, otherwise
 # the OpenSSL build will fail
+# TODO: drop x86 paths.
 $ENV:PATH = "C:\Perl\bin;$ENV:PATH"
+$ENV:PATH = "C:\Perl64\bin;$ENV:PATH"
 $ENV:PATH += ";$ENV:ProgramFiles\7-Zip"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\Git\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\CMake\bin"
+$ENV:PATH += ";${ENV:ProgramFiles}\Git\bin"
+$ENV:PATH += ";${ENV:ProgramFiles}\CMake\bin"
 $ENV:PATH += ";${ENV:ProgramFiles(x86)}\nasm"
 
 $vsVersion = "${VSVersionNumber}.0"
