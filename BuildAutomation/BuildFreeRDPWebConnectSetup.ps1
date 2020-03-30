@@ -1,7 +1,8 @@
 Param(
   [string]$SignX509Thumbprint,
   [ValidateSet("x86", "x64")]
-  [string]$Platform = "x64"
+  [string]$Platform = "x64",
+  [switch]$SkipCloningInstallerRepo
 )
 
 $ErrorActionPreference = "Stop"
@@ -14,6 +15,8 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 . "$scriptPath\BuildUtils.ps1"
 
 $basePath = "C:\Build\FreeRDP-WebConnect"
+$msiRepoUrl = "git@github.com:/cloudbase/FreeRDP-WebConnect-Installer.git"
+$msiBranch = "master"
 
 CheckDir $basePath
 pushd .
@@ -28,12 +31,18 @@ try
 
     SetVCVars
 
-    ExecRetry {
-        # Make sure to have a private key that matches a github deployer key in $ENV:HOME\.ssh\id_rsa
-        GitClonePull "FreeRDP-WebConnect-Installer" "git@github.com:/cloudbase/FreeRDP-WebConnect-Installer.git"
+    if (!($SkipCloningInstallerRepo)) {
+        $solution_dir = join-Path $basePath "FreeRDP-WebConnect-Installer"
+        ExecRetry {
+            # Make sure to have a private key that matches a github deployer
+            # key in $ENV:HOME\.ssh\id_rsa
+            GitClonePull $solution_dir $msiRepoUrl $msiBranch
+        }
+    }
+    else {
+        $solution_dir = Join-Path -Path $PSScriptRoot -ChildPath ..\ -Resolve
     }
 
-    $solution_dir = Resolve-Path "FreeRDP-WebConnect-Installer"
     $msm_project_dir = "$solution_dir\FreeRDP-WebConnect-SetupModule"
     $msi_project_dir = "$solution_dir\FreeRDP-WebConnect-Installer"
     $msm_binaries_dir = "$msm_project_dir\Binaries"
