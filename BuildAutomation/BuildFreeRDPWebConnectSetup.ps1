@@ -42,9 +42,13 @@ try
     $buildDir = "$basePath\Build"
 
     del -Force -Recurse "$msm_binaries_dir\*"
+
+    CheckDir("$msm_binaries_dir\plugins")
+
     copy "$buildDir\bin\*.dll" $msm_binaries_dir
     copy "$buildDir\bin\wsgate.exe" $msm_binaries_dir
     copy "$buildDir\bin\openssl.exe" $msm_binaries_dir
+    copy "$buildDir\bin\plugins\*.dll" "$msm_binaries_dir\plugins"
 
     pushd $solution_dir
     try
