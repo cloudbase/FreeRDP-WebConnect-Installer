@@ -20,6 +20,7 @@ FreeRDP-WebConnect-Installer/FreeRDPWebConnectSetup.msm
 FreeRDP-WebConnect-SetupModule/Binaries.wxs
 FreeRDP-WebConnect-SetupModule/Binaries_tmp.wxs
 FreeRDP-WebConnect-SetupModule/WebRoot.wxs
+FreeRDP-WebConnect-SetupModule/Binaries
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
