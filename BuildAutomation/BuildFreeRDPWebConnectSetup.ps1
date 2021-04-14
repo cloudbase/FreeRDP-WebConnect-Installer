@@ -2,7 +2,8 @@ Param(
   [string]$SignX509Thumbprint,
   [ValidateSet("x86", "x64")]
   [string]$Platform = "x64",
-  [switch]$SkipCloningInstallerRepo
+  [switch]$SkipCloningInstallerRepo,
+  [string]$SignTimestampUrl = "http://timestamp.digicert.com?alg=sha256"
 )
 
 $ErrorActionPreference = "Stop"
@@ -77,7 +78,7 @@ try
     if($SignX509Thumbprint)
     {
         ExecRetry {
-            &signtool.exe sign /sha1 $SignX509Thumbprint /t http://timestamp.verisign.com/scripts/timstamp.dll /v $msi_path
+            &signtool.exe sign /sha1 $SignX509Thumbprint /tr $SignTimestampUrl /td SHA256 /v $msi_path
             if ($LastExitCode) { throw "signtool failed" }
         }
     }
